@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+vendor/
+__pycache__/
+*.py[cod]
+.venv/
+env/
+venv/
+
+# Environment and Secrets
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+*.pem
+*.key
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build and Dist outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+.astro/
+coverage/
+*.log

@@ -1,5 +1,5 @@
 ---
-description: Inicializar un nuevo proyecto configurando Git, GitHub (privado), marco ASD v2, docs/, .agents/, AGENTS.md, CONVENTIONS.md, workflows, agentes del pipeline y versionado.
+description: Inicializar un nuevo proyecto configurando Git, GitHub (privado), marco ASD v2, docs/, .agents/, AGENTS.md, CONVENTIONS.md, workflows, agentes del pipeline, plantillas deterministas de skills y versionado.
 user-invocable: true
 ---
 
@@ -9,21 +9,21 @@ user-invocable: true
 
 Este workflow automatiza la inicialización de cualquier directorio como un proyecto estructurado bajo los estándares del desarrollador (Idequel Bernabel) y el **Framework ASD v2**.
 
-Soporta proyectos de dominio único y proyectos **multi-vertical** (ej: Consultor con verticales `admin`, `technology`, `content`). Configura Git, GitHub privado, `.gitignore`, jerarquía `docs/`, reglas de agente por dominio, y para proyectos de software instala el pipeline Uncle Bob completo (7 agentes + workflows).
+Soporta proyectos de dominio único y proyectos **multi-vertical** (ej: Consultor con verticales `admin`, `technology`, `content`). Configura Git, GitHub privado, `.gitignore`, jerarquía `docs/`, reglas de agente por dominio, **instalación determinista de skills vía symlinks** desde `~/.agents/skills/`, sincronización de la tabla `## Auto-invoke Skills` en `AGENTS.md`, y para proyectos de software instala el pipeline Uncle Bob completo (7 agentes + workflows).
 
 ---
 
-## Dominios de Proyecto Disponibles
+## Dominios de Proyecto y Presets de Skills
 
-El proyecto debe clasificarse en una de las 5 categorías para aplicar la plantilla adecuada desde `/home/ibernabel/.agents/templates/`:
+El proyecto debe clasificarse en una de las 5 categorías para aplicar la plantilla y el conjunto de skills adecuado desde `/home/ibernabel/.agents/templates/`:
 
-| Dominio | Plantilla | Modo | Aplica para |
-|---------|-----------|------|-------------|
-| `software` | `software-dev-agents.md` | Planning Mode (Strict) | APIs, web apps, CLIs, servicios backend/frontend |
-| `admin` | `business-admin-agents.md` | Admin Mode | Gestión de clientes, facturación, contratos, CRM |
-| `ai-agent` | `ai-agents-agents.md` | Planning Mode | Agentes LLM, RAG, chatbots, pipelines de IA |
-| `content` | `content-brand-agents.md` | Fast Mode | Redes sociales, blogs, newsletters, marca personal |
-| `video` | `video-production-agents.md` | Fast Mode | YouTube, Shorts, Reels, guiones, postproducción |
+| Dominio | Plantilla | Modo | Preset de Skills | Aplica para |
+|---------|-----------|------|------------------|-------------|
+| `software` | `software-dev-agents.md` | Planning Mode (Strict) | `software` (36+ skills) | APIs, web apps, CLIs, microservicios backend/frontend |
+| `admin` | `business-admin-agents.md` | Admin Mode | `admin` (14 skills) | Gestión de clientes, facturación, contratos, CRM |
+| `ai-agent` | `ai-agents-agents.md` | Planning Mode | `ai-agent` (24 skills) | Agentes LLM, RAG, chatbots, pipelines de IA |
+| `content` | `content-brand-agents.md` | Fast Mode | `content` (12 skills) | Redes sociales, blogs, newsletters, marca personal |
+| `video` | `video-production-agents.md` | Fast Mode | `video` (12 skills) | YouTube, Shorts, Reels, guiones, postproducción |
 
 ---
 
@@ -33,9 +33,9 @@ El agente detecta automáticamente el modo correcto según el estado del directo
 
 | Condición detectada | Modo | Comportamiento |
 |---------------------|------|----------------|
-| Sin `.git/` | **Init** (normal) | Flujo completo: GitHub, Git init, docs, AGENTS.md, etc. |
-| `.git/` existe, sin `.agents/` | **Retrofit** | Solo inyecta infraestructura ASD. No toca código ni Git. |
-| `.git/` existe + `.agents/` existe | **Update** | Solo actualiza lo que falta o está desactualizado. |
+| Sin `.git/` | **Init** (normal) | Flujo completo: GitHub, Git init, docs, AGENTS.md, skills, etc. |
+| `.git/` existe, sin `.agents/` | **Retrofit** | Inyecta infraestructura ASD, skills y agentes. No toca código ni Git. |
+| `.git/` existe + `.agents/` existe | **Update** | Actualiza lo que falta o está desactualizado (skills, workflows, docs). |
 
 ```bash
 # Auto-detection logic
@@ -45,82 +45,78 @@ else MODE="update"; fi
 echo "Detected mode: $MODE"
 ```
 
-### ⚡ Modo Retrofit (Proyectos Existentes: Lender, Consultor, Lamas, etc.)
+### ⚡ Modo Retrofit & Update (Proyectos Existentes)
 
-Usado cuando el proyecto ya tiene código activo, commits y estructura. **No se modifica nada existente.**
+Usado cuando el proyecto ya tiene código activo, commits y estructura. **No se modifica nada existente sin autorización.**
 
 **Pasos que se SALTAN en modo retrofit:**
 - Paso 2 (GitHub + Git init) — el repo ya existe
-- `.gitignore` — si ya existe, no se sobreescribe (se muestra diff de qué añadir manualmente)
+- `.gitignore` — si ya existe, no se sobreescribe (se hace merge no destructivo)
 - `README.md` — no se sobreescribe si ya existe
 
-**Pasos que SÍ se ejecutan en modo retrofit:**
-- Skill Inventory Check (Paso 1B)
+**Pasos que SÍ se ejecutan en modo retrofit y update:**
+- Skill Inventory Check y Preset Resolution (Paso 1B)
 - Detección de verticales (Paso 1, punto 3-4)
 - Creación de `docs/` y subcarpetas faltantes (sin tocar los existentes)
 - Paso 6A/6B: `.agents/AGENTS.md` por dominio/vertical
+- Paso 6C: **Instalación de Skills del Proyecto vía symlinks y sincronización de AGENTS.md**
 - Paso 7 completo (si dominio = software): agentes, CONVENTIONS.md, code-pipeline, tests/
-- Paso 8: workflows
+- Paso 8: workflows globales y auditoría post-ejecución
 
 ---
 
 ## Pasos de Ejecución del Agente
 
-### Paso 1: Determinación de Nombre, Dominio y Verticales
+### Paso 1: Determinación de Nombre, Dominio, Verticales y Stack
 
 1. Leer el nombre del directorio actual o consultar al usuario el nombre deseado.
 2. Si el usuario no especificó el dominio, solicitar la selección de uno de los 5 dominios.
-3. **Detección multi-vertical:** Verificar si el directorio actual contiene subdirectorios que puedan ser verticales de trabajo:
+3. Si el dominio es `software`, detectar o preguntar por los stacks adicionales (ej: `frontend`, `backend`, `typescript`, `python`).
+4. **Detección multi-vertical:** Verificar si el directorio actual contiene subdirectorios que puedan ser verticales de trabajo:
 
 ```bash
 # Detect potential vertical subdirectories (non-hidden, non-standard dirs)
 ls -d */ 2>/dev/null | grep -vE '^(node_modules|\.git|dist|build|__pycache__|\.venv)/$'
 ```
 
-4. Si se detectan subdirectorios, preguntar al usuario:
+5. Si se detectan subdirectorios, preguntar al usuario:
    - ¿Este proyecto tiene múltiples verticales? (ej: `admin/`, `technology/`, `content/`)
    - Para cada subdirectorio relevante: ¿qué dominio ASD aplica? (software / admin / ai-agent / content / video)
-   - Guardar el mapa de verticales → dominios para usar en el Paso 6B.
+   - Guardar el mapa de verticales → dominios para usar en los Pasos 6B y 6C.
 
 ---
 
-### Paso 1B: Skill Inventory Check
+### Paso 1B: Skill Inventory & Registry Resolution
 
-Antes de configurar el proyecto, el agente verifica que las skills requeridas por el dominio seleccionado están instaladas globalmente.
+Antes de configurar el proyecto, el agente verifica que las skills necesarias están instaladas en el almacén global `~/.agents/skills/`.
 
 ```bash
 # List all installed global skills
 ls /home/ibernabel/.agents/skills/
 ```
 
-#### Skills requeridas por dominio
+#### Skills Principales por Dominio
 
-| Dominio | Skills esenciales a verificar |
-|---------|-------------------------------|
-| `software` | `tdd`, `typescript`, `commit`, `code-review`, `diagnosing-bugs`, `playwright`, `pytest`, `react-19`, `nextjs-15`, `zod-4` |
-| `admin` | `invoice-generator`, `proposal-writer`, `contract-drafter`, `client-crm-workflow`, `project-estimator` |
-| `ai-agent` | `langchain`, `langgraph`, `prompt-engineering`, `autonomous-agents`, `langfuse` |
-| `content` | `social-media-writer`, `content-calendar`, `hook-writer`, `seo-copywriter`, `brand-voice-enforcer` |
-| `video` | `video-script-writer`, `shot-list-generator`, `thumbnail-designer`, `video-seo`, `subtitle-generator` |
+| Dominio | Skills Clave a Garantizar |
+|---------|---------------------------|
+| `software` | `prd`, `domain-modeling`, `concise-planning`, `c4-architecture`, `mermaid-diagram-specialist`, `codebase-design`, `tdd`, `code-review`, `diagnosing-bugs`, `refactor`, `test-api`, `playwright`, `pytest`, `typescript`, `frontend-design`, `api-design-principles`, `security-compliance`, `best-practices`, `performance`, `commit`, `repo-sync`, `post-session-doc`, `versioning-guide` |
+| `admin` | `invoice-generator`, `proposal-writer`, `contract-drafter`, `client-crm-workflow`, `project-estimator`, `email-composer`, `excel-analysis`, `pdf-processing-pro`, `freelance-job-analyzer`, `meeting-insights-analyzer`, `commit`, `post-session-doc`, `repo-sync`, `versioning-guide` |
+| `ai-agent` | `langchain`, `langgraph`, `langfuse`, `langsmith-observability`, `ai-sdk-5`, `prompt-engineering`, `prompt-caching`, `autonomous-agents`, `context-window-management`, `agent-development`, `notebooklm`, `prd`, `domain-modeling`, `tdd`, `commit`, `post-session-doc`, `repo-sync`, `versioning-guide` |
+| `content` | `social-media-writer`, `content-calendar`, `hook-writer`, `seo-copywriter`, `brand-voice-enforcer`, `newsletter-composer`, `humanizer`, `audience-analyzer`, `email-composer`, `commit`, `post-session-doc`, `repo-sync` |
+| `video` | `video-script-writer`, `shot-list-generator`, `thumbnail-designer`, `video-seo`, `subtitle-generator`, `editing-workflow`, `hook-writer`, `audience-analyzer`, `brand-voice-enforcer`, `commit`, `post-session-doc`, `repo-sync` |
 
-Si alguna skill requerida **no está instalada**, el agente avisa:
-```
-⚠️  Skill 'tdd' no encontrada en ~/.agents/skills/
-    Para instalarla: buscar en el repositorio de skills de Matt Pocock
-    o crearla con /skill-creator
-```
+#### Búsqueda en Registros Online si falta alguna skill
+Si alguna skill no se encuentra instalada localmente, el agente puede consultar el registro online usando:
 
-#### Verificación de Matt Pocock's Skills
-
-Para cualquier dominio, verificar también la presencia de las skills de Matt Pocock que potencian el flujo ASD:
 ```bash
-# Check key Matt Pocock skills
-for skill in grill-with-docs grilling domain-modeling brainstorming implement refactor to-spec; do
-  [ -d "/home/ibernabel/.agents/skills/$skill" ] && echo "✅ $skill" || echo "⚠️  $skill (not found)"
-done
+# Search online registries (SkillsMP, Antigravity-Skills, Skills.md)
+python3 /home/ibernabel/.agents/scripts/skill_registry.py search "<query>"
+
+# Install missing skill from GitHub repository
+python3 /home/ibernabel/.agents/scripts/skill_registry.py install "<repo_url>" [--skill-path "<path>"] [--name "<name>"]
 ```
 
-Si no están instaladas, sugerir: `setup-matt-pocock-skills` skill o ver https://github.com/mattpocock/skills
+Consulta el catálogo completo en `~/.agents/SKILL_REGISTRIES.md`.
 
 ---
 
@@ -146,14 +142,43 @@ git init && git branch -M main
 
 ---
 
-### Paso 3: Generación de `.gitignore`
+### Paso 3: Actualización de `.gitignore`
 
-Crear `.gitignore` copiando la plantilla adecuada desde `/home/ibernabel/.agents/templates/gitignore/`:
-- `software` → `gitignore_software.txt`
-- `admin` → `gitignore_admin.txt`
-- Otros dominios → `gitignore_general.txt`
+> ⚠️ **REGLA ESTRICTA: NUNCA sobreescribir ni borrar `.gitignore`.** Si el archivo existe, solo se agregan las entradas que falten. Si no existe, se crea desde la plantilla.
 
-Para proyectos multi-vertical, usar la plantilla del dominio raíz (dominio primario del proyecto).
+**Plantillas de referencia**:
+- `software` → `/home/ibernabel/.agents/templates/gitignore/gitignore_software.txt`
+- `admin` → `/home/ibernabel/.agents/templates/gitignore/gitignore_admin.txt`
+- Otros dominios → `/home/ibernabel/.agents/templates/gitignore/gitignore_general.txt`
+
+**Procedimiento obligatorio:**
+
+```bash
+# 1. Verificar si .gitignore ya existe
+if [ -f ".gitignore" ]; then
+  echo "⚠️  .gitignore ya existe — modo MERGE (no sobreescritura)"
+  # 2. Leer la plantilla del dominio y agregar solo las entradas faltantes
+else
+  echo "ℹ️  .gitignore no existe — creando desde plantilla"
+  cp /home/ibernabel/.agents/templates/gitignore/gitignore_<domain>.txt .gitignore
+fi
+```
+
+**Entradas mínimas a garantizar en cualquier proyecto de software**:
+```gitignore
+# Code intelligence cache — never commit
+.codegraph/
+
+# Environment secrets
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+__pycache__/
+.venv/
+```
 
 ---
 
@@ -190,7 +215,6 @@ Generar `docs/README.md` con el índice del SSOT y enlaces a cada subdirectorio.
    - Comandos principales (desarrollo, pruebas, sincronización).
 
 2. Crear `ROADMAP.md` — el formato varía por dominio:
-
    - **Para dominio `software`:** Incluir secciones de DDD:
      ```markdown
      # ROADMAP
@@ -248,22 +272,30 @@ mkdir -p <vertical>/.agents
 cp /home/ibernabel/.agents/templates/<vertical-domain-template>.md <vertical>/.agents/AGENTS.md
 ```
 
-   **Ejemplo para Consultor:**
-   ```bash
-   # admin vertical
-   mkdir -p admin/.agents
-   cp /home/ibernabel/.agents/templates/business-admin-agents.md admin/.agents/AGENTS.md
+---
 
-   # technology vertical (software domain)
-   mkdir -p technology/.agents
-   cp /home/ibernabel/.agents/templates/software-dev-agents.md technology/.agents/AGENTS.md
+### Paso 6C: Instalación Determinista de Skills del Proyecto
 
-   # content vertical
-   mkdir -p content/.agents
-   cp /home/ibernabel/.agents/templates/content-brand-agents.md content/.agents/AGENTS.md
-   ```
+Instalar las skills del dominio en el proyecto creando enlaces simbólicos en `.agents/skills/` apuntando a `~/.agents/skills/` y sincronizar automáticamente la tabla `## Auto-invoke Skills` en `.agents/AGENTS.md`:
 
-3. Las verticales de dominio `software` requieren el Paso 7 (pipeline completo) aplicado a su subdirectorio.
+```bash
+# Install deterministic skill preset and sync Auto-invoke table in AGENTS.md
+python3 /home/ibernabel/.agents/scripts/install_project_skills.py --project-dir . --domain <domain>
+```
+
+Si el proyecto tiene stacks específicos (ej: fullstack con frontend y backend):
+```bash
+# Example for fullstack software project with python backend and react frontend
+python3 /home/ibernabel/.agents/scripts/install_project_skills.py --project-dir . --domain software --stack frontend --stack backend --stack typescript
+```
+
+Para proyectos multi-vertical, ejecutar este comando en cada vertical:
+```bash
+# Example for multi-vertical project
+python3 /home/ibernabel/.agents/scripts/install_project_skills.py --project-dir technology --domain software
+python3 /home/ibernabel/.agents/scripts/install_project_skills.py --project-dir admin --domain admin
+python3 /home/ibernabel/.agents/scripts/install_project_skills.py --project-dir content --domain content
+```
 
 ---
 
@@ -322,27 +354,26 @@ touch $SW_DIR/tests/features/.gitkeep
 
 ---
 
-### Paso 8: Copia de Workflows Globales (`repo-sync` & `post-session-doc`)
+### Paso 8: Copia de Workflows Globales (`repo-sync`, `post-session-doc`, y Skill Wrappers)
 
 ```bash
-# Copy global workflows to project .agents/workflows/
+# Copy all global workflows to project .agents/workflows/
 mkdir -p .agents/workflows
-cp /home/ibernabel/.agents/workflows/repo-sync.md .agents/workflows/repo-sync.md
-cp /home/ibernabel/.agents/workflows/post-session-doc.md .agents/workflows/post-session-doc.md
+cp /home/ibernabel/.agents/workflows/*.md .agents/workflows/
 ```
 
 > **Nota:** Si el proyecto es multi-vertical con una vertical de software, copiar también estos workflows al `$SW_DIR/.agents/workflows/` de esa vertical.
 
 ---
 
-### Paso 9: Commit Inicial y Push a GitHub
+### Paso 9: Commit Inicial y Push a GitHub (Solo Modo Init)
 
 ```bash
 # Stage all initialized files
 git add .
 
 # Create initial commit using Conventional Commit format
-git commit -m "chore: initialize project with ASD framework v2 standards"
+git commit -m "chore: initialize project with ASD framework v2 standards and deterministic skills"
 
 # Push initial commit to origin main branch
 git push -u origin main
@@ -350,25 +381,103 @@ git push -u origin main
 
 ---
 
-## Verificación Post-Inicialización
+## Auditoría Obligatoria Post-Ejecución
+
+> ⚠️ **Esta sección es OBLIGATORIA y no es opcional.** El agente DEBE ejecutar estos comandos y reportar los resultados reales del sistema de archivos. No es suficiente afirmar que algo fue hecho — debe comprobarse con comandos que lean el filesystem.
+
+### Principio de verificación
+
+El agente NO debe confiar en su propio historial de ejecución para determinar si algo fue creado. Debe leer el filesystem con comandos independientes y reportar el estado real.
+
+### Auditoría para dominio `software`
+
+Ejecutar cada comando y reportar el resultado (✅ / ❌) junto con el output real:
 
 ```bash
-# Verify git status and project structure
-git status && tree -L 3 .
+# ── Estructura de agentes ──────────────────────────────────────────────────
+echo "=== AGENTS AUDIT ===" && \
+ls -la .agents/AGENTS.md 2>/dev/null && echo "✅ AGENTS.md" || echo "❌ AGENTS.md MISSING" && \
+ls -la .agents/CONVENTIONS.md 2>/dev/null && echo "✅ CONVENTIONS.md" || echo "❌ CONVENTIONS.md MISSING" && \
+ls .agents/agents/ 2>/dev/null && echo "✅ agents/ dir" || echo "❌ agents/ dir MISSING"
+
+# ── Verificar los 7 agentes del pipeline ──────────────────────────────────
+for agent in orchestrator specifier coder refactorer architect qa pii-verifier; do
+  ls .agents/agents/$agent/agent.md 2>/dev/null \
+    && echo "✅ agents/$agent/agent.md" \
+    || echo "❌ agents/$agent/agent.md MISSING"
+done
+
+# ── Skills del Proyecto (Symlinks) ────────────────────────────────────────
+echo "=== SKILLS AUDIT ===" && \
+SKILLS_COUNT=$(ls -la .agents/skills/ 2>/dev/null | grep -E '^l' | wc -l) && \
+if [ "$SKILLS_COUNT" -gt 0 ]; then
+  echo "✅ $SKILLS_COUNT project skills linked in .agents/skills/"
+else
+  echo "❌ .agents/skills/ is empty or missing symlinks"
+fi
+
+# ── Workflows ─────────────────────────────────────────────────────────────
+for wf in code-pipeline repo-sync post-session-doc; do
+  ls .agents/workflows/$wf.md 2>/dev/null \
+    && echo "✅ workflows/$wf.md" \
+    || echo "❌ workflows/$wf.md MISSING"
+done
+
+# ── Estructura docs/ ──────────────────────────────────────────────────────
+echo "=== DOCS AUDIT ===" && \
+for dir in planning implementation fixes testing decisions knowledges; do
+  ls -d docs/$dir 2>/dev/null \
+    && echo "✅ docs/$dir/" \
+    || echo "❌ docs/$dir/ MISSING"
+done
+
+# ── Archivos de software ──────────────────────────────────────────────────
+echo "=== SOFTWARE FILES AUDIT ===" && \
+cat VERSION 2>/dev/null && echo "✅ VERSION" || echo "❌ VERSION MISSING" && \
+ls scripts/bump_version.py 2>/dev/null && echo "✅ bump_version.py" || echo "❌ bump_version.py MISSING" && \
+ls tests/features/ 2>/dev/null && echo "✅ tests/features/" || echo "❌ tests/features/ MISSING" && \
+ls ROADMAP.md 2>/dev/null && echo "✅ ROADMAP.md" || echo "❌ ROADMAP.md MISSING"
+
+# ── .gitignore integridad ─────────────────────────────────────────────────
+echo "=== GITIGNORE AUDIT ===" && \
+if [ -f ".gitignore" ]; then
+  echo "✅ .gitignore exists"
+  grep -q ".codegraph" .gitignore && echo "✅ .codegraph/ entry present" || echo "⚠️  .codegraph/ entry MISSING — add manually"
+  grep -q "\.env" .gitignore && echo "✅ .env entry present" || echo "⚠️  .env entry MISSING — add manually"
+else
+  echo "❌ .gitignore MISSING"
+fi
+
+# ── Git remote ────────────────────────────────────────────────────────────
+echo "=== GIT AUDIT ===" && \
+git remote -v 2>/dev/null || echo "❌ No git remote configured"
 ```
 
-### Checklist de verificación para dominio `software`
+### Reporte final obligatorio
 
-- [ ] `.agents/AGENTS.md` existe y es `software-dev-agents.md`
-- [ ] `.agents/CONVENTIONS.md` existe con `project.name` y `project.pii` completados
-- [ ] `.agents/agents/` contiene los 7 agentes del pipeline
-- [ ] `.agents/workflows/code-pipeline.md` existe
-- [ ] `.agents/workflows/repo-sync.md` existe
-- [ ] `.agents/workflows/post-session-doc.md` existe
-- [ ] `docs/` tiene todas las subcarpetas (planning, implementation, fixes, testing, decisions, knowledges)
-- [ ] `ROADMAP.md` tiene secciones de DDD (Domain Model, Bounded Contexts, Ubiquitous Language)
-- [ ] `VERSION` contiene `0.1.0`
-- [ ] `scripts/bump_version.py` existe y tiene permisos de ejecución
-- [ ] `tests/features/` existe para archivos Gherkin
-- [ ] Repositorio GitHub privado creado y conectado
-- [ ] Commit inicial hecho con mensaje `chore: initialize project with ASD framework v2 standards`
+Al terminar la auditoría, el agente debe producir un resumen en este formato:
+
+```
+## Resultado de Auditoría — [nombre del proyecto] — [fecha]
+
+| Item | Estado | Notas |
+|------|--------|-------|
+| AGENTS.md | ✅/❌ | |
+| Skills Vinculadas (.agents/skills/) | ✅/❌ | Total de skills enlazadas |
+| Auto-invoke Skills (AGENTS.md) | ✅/❌ | Tabla sincronizada |
+| CONVENTIONS.md | ✅/❌ | |
+| agents/ (7 agentes) | ✅/❌ | Listar cuáles faltan si aplica |
+| workflows/ (archivos) | ✅/❌ | |
+| docs/ (6 subdirectorios) | ✅/❌ | |
+| VERSION | ✅/❌ | |
+| scripts/bump_version.py | ✅/❌ | |
+| tests/features/ | ✅/❌ | |
+| ROADMAP.md | ✅/❌ | |
+| .gitignore (sin sobreescritura) | ✅/❌ | |
+| Git remote | ✅/❌ | |
+
+**Items faltantes:** [lista o "Ninguno"]
+**Acción requerida:** [pasos para corregir los faltantes, si los hay]
+```
+
+> Si hay ❌ en el reporte, el agente debe intentar corregirlos inmediatamente y re-ejecutar la verificación del item fallido antes de dar la tarea por completada.

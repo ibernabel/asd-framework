@@ -175,3 +175,23 @@ docs/
 | `commit` | Creating git commits |
 | `code-review` | Reviewing PRs or branches |
 | `diagnosing-bugs` | Debugging hard bugs or regressions |
+
+---
+
+## Global Workflows & Meta-Commands
+
+The following meta-workflows are managed globally in `~/.agents/workflows/` (`/home/ibernabel/.agents/workflows/`) and available in all projects:
+
+| Command / Trigger | Canonical Path | Description |
+|-------------------|----------------|-------------|
+| `/project-init` | `~/.agents/workflows/project-init.md` | Initialize, retrofit, or update project structure, ASD docs, and skills |
+| `/code-pipeline` | `.agents/workflows/code-pipeline.md` | Uncle Bob 7-Agent Pipeline execution |
+| `/repo-sync` | `.agents/workflows/repo-sync.md` | SemVer bump, CHANGELOG, commit, tag, and push |
+| `/post-session-doc` | `.agents/workflows/post-session-doc.md` | Update SSOT `docs/` at end of session |
+| `/docs-and-sync` | `.agents/workflows/docs-and-sync.md` | Run `post-session-doc` followed by `repo-sync` |
+| `/domain-modeling` | `.agents/workflows/domain-modeling.md` | Domain modeling & ADR generator |
+| `/grilling` | `.agents/workflows/grilling.md` | Architecture stress-testing interview |
+
+> **Meta-Workflow Rule for `/project-init`:**
+> `project-init.md` is maintained strictly at `~/.agents/workflows/project-init.md`. When `/project-init` is entered or requested, load and execute the global file directly. Do not search for a local file in the project.
+

@@ -354,15 +354,22 @@ touch $SW_DIR/tests/features/.gitkeep
 
 ---
 
-### Paso 8: Copia de Workflows Globales (`repo-sync`, `post-session-doc`, y Skill Wrappers)
+### Paso 8: Vinculación de Workflows Globales vía Symlinks (Excluyendo `project-init.md`)
+
+Los workflows globales (`repo-sync.md`, `post-session-doc.md`, `docs-and-sync.md`, `code-pipeline.md`, `domain-modeling.md`, `grilling.md`, etc.) deben instalarse en `.agents/workflows/` mediante **enlaces simbólicos (symlinks)** apuntando al almacén global `~/.agents/workflows/`.
+
+> [!IMPORTANT]
+> **Regla de Workflows Globales vs Locales:**
+> 1. `project-init.md` es un **meta-workflow estrictamente global** (vive exclusivamente en `~/.agents/workflows/project-init.md`). **NUNCA** debe existir como copia local en proyectos individuales para evitar desfases de versión.
+> 2. Los demás workflows globales se vinculan mediante **symlinks** para que cualquier actualización central en `~/.agents/workflows/` se propague automáticamente a todos los proyectos.
+> 3. Los workflows específicos de un proyecto (ej: `deploy-zip.md`) se mantienen como archivos locales independientes.
 
 ```bash
-# Copy all global workflows to project .agents/workflows/
-mkdir -p .agents/workflows
-cp /home/ibernabel/.agents/workflows/*.md .agents/workflows/
+# Link all global workflows as symlinks (and remove any local project-init.md)
+python3 /home/ibernabel/.agents/scripts/install_project_skills.py --project-dir . --workflows-only
 ```
 
-> **Nota:** Si el proyecto es multi-vertical con una vertical de software, copiar también estos workflows al `$SW_DIR/.agents/workflows/` de esa vertical.
+> **Nota:** Si se ejecutó `install_project_skills.py` en el Paso 6C sin `--no-workflows`, la vinculación de workflows ya se realizó automáticamente. En proyectos multi-vertical, ejecutar también para cada vertical `$SW_DIR`.
 
 ---
 

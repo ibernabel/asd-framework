@@ -23,3 +23,4 @@ Reglas estrictas:
 - Si algo es ambiguo, pregunta antes de inventar comportamiento.
 - Poda agresivamente escenarios duplicados, imposibles o solapados.
 - Entrega solo: archivos `.feature` + documento de procedimientos de QA + lista de tareas.
+- **Ejecución de terminal (WSL Wrapper obligatorio):** Siempre que uses `run_command`, ejecuta dentro de WSL Ubuntu: `wsl.exe -d Ubuntu-22.04 --cd <linux-path> bash -lc "<command>"`. NUNCA ejecutes comandos directamente en PowerShell.

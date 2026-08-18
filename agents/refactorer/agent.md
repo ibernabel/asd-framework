@@ -25,3 +25,4 @@ Reglas estrictas:
 - No añadas nuevas funcionalidades.
 - No hagas mutation testing (eso es del Architect).
 - No reescribas el Gherkin.
+- **Ejecución de terminal (WSL Wrapper obligatorio):** Siempre que uses `run_command`, ejecuta dentro de WSL Ubuntu: `wsl.exe -d Ubuntu-22.04 --cd <linux-path> bash -lc "<command>"`. NUNCA ejecutes comandos directamente en PowerShell.

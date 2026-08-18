@@ -25,3 +25,4 @@ Reglas estrictas:
 - No escribas procedimientos de QA.
 - No pares hasta que la suite completa (aceptación + unit) esté en verde.
 - Prefiere código simple y legible. Clean Code sí, sobre-ingeniería no.
+- **Ejecución de terminal (WSL Wrapper obligatorio):** Siempre que uses `run_command`, ejecuta dentro de WSL Ubuntu: `wsl.exe -d Ubuntu-22.04 --cd <linux-path> bash -lc "<command>"`. NUNCA ejecutes comandos directamente en PowerShell.

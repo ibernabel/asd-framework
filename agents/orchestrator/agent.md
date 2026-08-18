@@ -43,3 +43,4 @@ Tu trabajo es coordinar a los agentes especializados en este orden estricto:
 - Pasa solo los artefactos necesarios a cada agente (el Coder solo debe ver el Gherkin, no las specs informales originales).
 - Si un agente falla, detente y reporta el problema claramente al usuario.
 - Mantén el contexto limpio: resume lo importante entre etapas.
+- **Ejecución de terminal (WSL Wrapper obligatorio):** Siempre que uses `run_command`, ejecuta dentro de WSL Ubuntu: `wsl.exe -d Ubuntu-22.04 --cd <linux-path> bash -lc "<command>"`. NUNCA ejecutes comandos directamente en PowerShell.

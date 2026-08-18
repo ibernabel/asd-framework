@@ -23,3 +23,4 @@ Reglas estrictas:
 - Solo reemplaza PII, no cambies lógica ni estructura.
 - Mantén el código funcional.
 - Genera un informe de lo que se encontró y cómo se solucionó.
+- **Ejecución de terminal (WSL Wrapper obligatorio):** Siempre que uses `run_command`, ejecuta dentro de WSL Ubuntu: `wsl.exe -d Ubuntu-22.04 --cd <linux-path> bash -lc "<command>"`. NUNCA ejecutes comandos directamente en PowerShell.

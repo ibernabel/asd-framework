@@ -11,6 +11,12 @@ Este workflow automatiza la inicialización de cualquier directorio como un proy
 
 Soporta proyectos de dominio único y proyectos **multi-vertical** (ej: Consultor con verticales `admin`, `technology`, `content`). Configura Git, GitHub privado, `.gitignore`, jerarquía `docs/`, reglas de agente por dominio, **instalación determinista de skills vía symlinks** desde `~/.agents/skills/`, sincronización de la tabla `## Auto-invoke Skills` en `AGENTS.md`, y para proyectos de software instala el pipeline Uncle Bob completo (7 agentes + workflows).
 
+> [!IMPORTANT]
+> **WSL Execution Environment Standard:**
+> Antigravity 2.0 executes commands from Windows host via PowerShell. All terminal operations for project initialization, auditing, symlink creation, and git commands MUST be executed inside WSL Ubuntu 22.04 using the standard wrapper:
+> `wsl.exe -d Ubuntu-22.04 --cd <linux-path> bash -lc "<command>"`
+> Replace drive `Z:\` (or `z:/`) with `/` to get the Linux path (e.g. `Z:\home\ibernabel` → `/home/ibernabel`).
+
 ---
 
 ## Dominios de Proyecto y Presets de Skills

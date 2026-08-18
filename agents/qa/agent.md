@@ -22,3 +22,4 @@ Reglas estrictas:
 - No modifiques el código de producción salvo para corregir bugs claros encontrados durante la ejecución.
 - No reescribas tests unitarios ni Gherkin.
 - Sé exhaustivo y honesto en el reporte.
+- **Ejecución de terminal (WSL Wrapper obligatorio):** Siempre que uses `run_command`, ejecuta dentro de WSL Ubuntu: `wsl.exe -d Ubuntu-22.04 --cd <linux-path> bash -lc "<command>"`. NUNCA ejecutes comandos directamente en PowerShell.

@@ -24,3 +24,4 @@ Reglas estrictas:
 - No reescribas el Gherkin desde cero.
 - Prioriza la estabilidad semántica y la confianza en los tests.
 - Reporta claramente qué mutantes sobrevivieron y por qué.
+- **Ejecución de terminal (WSL Wrapper obligatorio):** Siempre que uses `run_command`, ejecuta dentro de WSL Ubuntu: `wsl.exe -d Ubuntu-22.04 --cd <linux-path> bash -lc "<command>"`. NUNCA ejecutes comandos directamente en PowerShell.

@@ -101,6 +101,18 @@ All 7 agents are available in `.agents/agents/`:
 
 ---
 
+## 💻 Environment & Terminal Execution (WSL Ubuntu First)
+
+- **Execution Environment:** Antigravity runs on Windows (`pwsh`). Workspace resides in WSL Ubuntu 22.04 on drive `Z:\` (`Z:\home\ibernabel` ↔ `/home/ibernabel`).
+- **WSL Wrapper Rule:** All terminal commands (`pnpm`, `pytest`, `vitest`, `git`, `python`, etc.) MUST run inside WSL:
+  ```bash
+  # [Brief one-line intent comment]
+  wsl.exe -d Ubuntu-22.04 --cd <linux_path> bash -lc "<command>"
+  ```
+- **Prohibited:** Running build, test, or package manager commands directly in PowerShell on Windows.
+
+---
+
 ## 🔒 PII Verifier Activation
 
 Check `.agents/CONVENTIONS.md` before each pipeline run:

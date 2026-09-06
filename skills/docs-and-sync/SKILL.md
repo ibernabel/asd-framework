@@ -1,6 +1,6 @@
 ---
-description: Ejecuta consecutivamente los workflows de documentación de fin de sesión (post-session-doc) y sincronización con repositorio (repo-sync).
-user-invocable: true
+name: docs-and-sync
+description: "Ejecuta consecutivamente los workflows de documentación de fin de sesión (post-session-doc) y sincronización con repositorio (repo-sync)."
 ---
 
 # Workflow: Documentación y Sincronización Completa (Docs & Sync)

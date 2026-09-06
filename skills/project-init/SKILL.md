@@ -1,15 +1,15 @@
 ---
-description: Inicializar un nuevo proyecto configurando Git, GitHub (privado), marco ASD v2, docs/, .agents/, AGENTS.md, CONVENTIONS.md, workflows, agentes del pipeline, plantillas deterministas de skills y versionado.
-user-invocable: true
+name: project-init
+description: "Inicializar un nuevo proyecto configurando Git, GitHub (privado), marco ASD v2, docs/, .agents/, AGENTS.md, CONVENTIONS.md, workflows, agentes del pipeline, plantillas deterministas de skills y versionado."
 ---
 
-# Workflow: Project Initialization (`project-init`)
+# Skill: Project Initialization (`project-init`)
 
 ## Descripción
 
-Este workflow automatiza la inicialización de cualquier directorio como un proyecto estructurado bajo los estándares del desarrollador (Idequel Bernabel) y el **Framework ASD v2**.
+Esta skill automatiza la inicialización de cualquier directorio como un proyecto estructurado bajo los estándares del desarrollador (Idequel Bernabel) y el **Framework ASD v2**.
 
-Soporta proyectos de dominio único y proyectos **multi-vertical** (ej: Consultor con verticales `admin`, `technology`, `content`). Configura Git, GitHub privado, `.gitignore`, jerarquía `docs/`, reglas de agente por dominio, **instalación determinista de skills vía symlinks** desde `~/.agents/skills/`, sincronización de la tabla `## Auto-invoke Skills` en `AGENTS.md`, y para proyectos de software instala el pipeline Uncle Bob completo (7 agentes + workflows).
+Soporta proyectos de dominio único y proyectos **multi-vertical** (ej: Consultor con verticales `admin`, `technology`, `content`). Configura Git, GitHub privado, `.gitignore`, jerarquía `docs/`, reglas de agente por dominio, **instalación determinista de skills vía symlinks** desde `~/.agents/skills/`, sincronización de la tabla `## Auto-invoke Skills` en `AGENTS.md`, y para proyectos de software instala el pipeline Uncle Bob completo (7 agentes) y skills deterministas.
 
 > [!IMPORTANT]
 > **WSL Execution Environment Standard:**
@@ -41,7 +41,7 @@ El agente detecta automáticamente el modo correcto según el estado del directo
 |---------------------|------|----------------|
 | Sin `.git/` | **Init** (normal) | Flujo completo: GitHub, Git init, docs, AGENTS.md, skills, etc. |
 | `.git/` existe, sin `.agents/` | **Retrofit** | Inyecta infraestructura ASD, skills y agentes. No toca código ni Git. |
-| `.git/` existe + `.agents/` existe | **Update** | Actualiza lo que falta o está desactualizado (skills, workflows, docs). |
+| `.git/` existe + `.agents/` existe | **Update** | Actualiza lo que falta o está desactualizado (skills, docs, reglas). |
 
 ```bash
 # Auto-detection logic
@@ -66,8 +66,8 @@ Usado cuando el proyecto ya tiene código activo, commits y estructura. **No se 
 - Creación de `docs/` y subcarpetas faltantes (sin tocar los existentes)
 - Paso 6A/6B: `.agents/AGENTS.md` por dominio/vertical
 - Paso 6C: **Instalación de Skills del Proyecto vía symlinks y sincronización de AGENTS.md**
-- Paso 7 completo (si dominio = software): agentes, CONVENTIONS.md, code-pipeline, tests/
-- Paso 8: workflows globales y auditoría post-ejecución
+- Paso 7 completo (si dominio = software): agentes, CONVENTIONS.md, code-pipeline skill, tests/
+- Paso 8: verificación de meta-skills y auditoría post-ejecución
 
 ---
 
@@ -105,7 +105,7 @@ ls /home/ibernabel/.agents/skills/
 
 | Dominio | Skills Clave a Garantizar |
 |---------|---------------------------|
-| `software` | `prd`, `domain-modeling`, `concise-planning`, `c4-architecture`, `mermaid-diagram-specialist`, `codebase-design`, `tdd`, `code-review`, `diagnosing-bugs`, `refactor`, `test-api`, `playwright`, `pytest`, `typescript`, `frontend-design`, `api-design-principles`, `security-compliance`, `best-practices`, `performance`, `commit`, `repo-sync`, `post-session-doc`, `versioning-guide` |
+| `software` | `code-pipeline`, `docs-and-sync`, `prd`, `domain-modeling`, `concise-planning`, `c4-architecture`, `mermaid-diagram-specialist`, `codebase-design`, `tdd`, `code-review`, `diagnosing-bugs`, `refactor`, `test-api`, `playwright`, `pytest`, `typescript`, `frontend-design`, `api-design-principles`, `security-compliance`, `best-practices`, `performance`, `commit`, `repo-sync`, `post-session-doc`, `versioning-guide` |
 | `admin` | `invoice-generator`, `proposal-writer`, `contract-drafter`, `client-crm-workflow`, `project-estimator`, `email-composer`, `excel-analysis`, `pdf-processing-pro`, `freelance-job-analyzer`, `meeting-insights-analyzer`, `commit`, `post-session-doc`, `repo-sync`, `versioning-guide` |
 | `ai-agent` | `langchain`, `langgraph`, `langfuse`, `langsmith-observability`, `ai-sdk-5`, `prompt-engineering`, `prompt-caching`, `autonomous-agents`, `context-window-management`, `agent-development`, `notebooklm`, `prd`, `domain-modeling`, `tdd`, `commit`, `post-session-doc`, `repo-sync`, `versioning-guide` |
 | `content` | `social-media-writer`, `content-calendar`, `hook-writer`, `seo-copywriter`, `brand-voice-enforcer`, `newsletter-composer`, `humanizer`, `audience-analyzer`, `email-composer`, `commit`, `post-session-doc`, `repo-sync` |
@@ -333,12 +333,8 @@ for AGENT in orchestrator specifier coder refactorer architect qa pii-verifier; 
 done
 ```
 
-#### 7C — Workflow code-pipeline
-```bash
-# Install code-pipeline workflow (for /code-pipeline command)
-mkdir -p $SW_DIR/.agents/workflows
-cp /home/ibernabel/.agents/workflows/code-pipeline.md $SW_DIR/.agents/workflows/code-pipeline.md
-```
+#### 7C — Skill code-pipeline
+`code-pipeline` se instala automáticamente como skill determinista en `.agents/skills/code-pipeline/` mediante `install_project_skills.py` (Paso 6C). No requiere archivos legados en `.agents/workflows/`.
 
 #### 7D — CONVENTIONS.md del proyecto
 ```bash
@@ -360,22 +356,15 @@ touch $SW_DIR/tests/features/.gitkeep
 
 ---
 
-### Paso 8: Vinculación de Workflows Globales vía Symlinks (Excluyendo `project-init.md`)
+### Paso 8: Verificación y Sincronización de Meta-Skills del Proyecto
 
-Los workflows globales (`repo-sync.md`, `post-session-doc.md`, `docs-and-sync.md`, `code-pipeline.md`, `domain-modeling.md`, `grilling.md`, etc.) deben instalarse en `.agents/workflows/` mediante **enlaces simbólicos (symlinks)** apuntando al almacén global `~/.agents/workflows/`.
+Las herramientas y meta-comandos globales (`code-pipeline`, `docs-and-sync`, `post-session-doc`, `repo-sync`, `domain-modeling`, `grilling`, etc.) se instalan y resuelven exclusivamente como **Skills** en `.agents/skills/` vía symlinks apuntando al almacén global `~/.agents/skills/`.
 
 > [!IMPORTANT]
-> **Regla de Workflows Globales vs Locales:**
-> 1. `project-init.md` es un **meta-workflow estrictamente global** (vive exclusivamente en `~/.agents/workflows/project-init.md`). **NUNCA** debe existir como copia local en proyectos individuales para evitar desfases de versión.
-> 2. Los demás workflows globales se vinculan mediante **symlinks** para que cualquier actualización central en `~/.agents/workflows/` se propague automáticamente a todos los proyectos.
-> 3. Los workflows específicos de un proyecto (ej: `deploy-zip.md`) se mantienen como archivos locales independientes.
-
-```bash
-# Link all global workflows as symlinks (and remove any local project-init.md)
-python3 /home/ibernabel/.agents/scripts/install_project_skills.py --project-dir . --workflows-only
-```
-
-> **Nota:** Si se ejecutó `install_project_skills.py` en el Paso 6C sin `--no-workflows`, la vinculación de workflows ya se realizó automáticamente. En proyectos multi-vertical, ejecutar también para cada vertical `$SW_DIR`.
+> **Arquitectura de Skills vs Workflows Legados:**
+> 1. Los workflows (`.agents/workflows/`) están deprecados. **NO se crean carpetas `.agents/workflows/`** en proyectos nuevos ni retrofits.
+> 2. `project-init` es una **meta-skill estrictamente global** (reside en `~/.agents/skills/project-init/SKILL.md`). **NUNCA** debe copiarse localmente en proyectos individuales para garantizar una única fuente de verdad.
+> 3. Todas las capacidades de slash commands (`/code-pipeline`, `/docs-and-sync`, `/repo-sync`, `/post-session-doc`, etc.) son provistas directamente por las skills instaladas en `.agents/skills/`.
 
 ---
 
@@ -429,12 +418,22 @@ else
   echo "❌ .agents/skills/ is empty or missing symlinks"
 fi
 
-# ── Workflows ─────────────────────────────────────────────────────────────
-for wf in code-pipeline repo-sync post-session-doc; do
-  ls .agents/workflows/$wf.md 2>/dev/null \
-    && echo "✅ workflows/$wf.md" \
-    || echo "❌ workflows/$wf.md MISSING"
+# ── Meta-Skills Clave (.agents/skills/) ────────────────────────────────────
+for skill in code-pipeline repo-sync post-session-doc docs-and-sync; do
+  ls .agents/skills/$skill/SKILL.md 2>/dev/null \
+    && echo "✅ skill: $skill" \
+    || echo "❌ skill: $skill MISSING"
 done
+
+# ── Limpieza de Workflows Legados ─────────────────────────────────────────
+if [ -d ".agents/workflows" ]; then
+  LEGACY_WFS=$(ls .agents/workflows/*.md 2>/dev/null | wc -l)
+  if [ "$LEGACY_WFS" -eq 0 ]; then
+    echo "✅ No legacy active workflows in .agents/workflows/"
+  else
+    echo "⚠️  Found $LEGACY_WFS legacy workflow(s) in .agents/workflows/ — migrate to skills"
+  fi
+fi
 
 # ── Estructura docs/ ──────────────────────────────────────────────────────
 echo "=== DOCS AUDIT ===" && \
@@ -480,7 +479,7 @@ Al terminar la auditoría, el agente debe producir un resumen en este formato:
 | Auto-invoke Skills (AGENTS.md) | ✅/❌ | Tabla sincronizada |
 | CONVENTIONS.md | ✅/❌ | |
 | agents/ (7 agentes) | ✅/❌ | Listar cuáles faltan si aplica |
-| workflows/ (archivos) | ✅/❌ | |
+| Meta-Skills (.agents/skills/) | ✅/❌ | code-pipeline, repo-sync, post-session-doc, docs-and-sync |
 | docs/ (6 subdirectorios) | ✅/❌ | |
 | VERSION | ✅/❌ | |
 | scripts/bump_version.py | ✅/❌ | |

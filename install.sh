@@ -78,7 +78,7 @@ echo ""
 
 # Create base directory structure
 mkdir -p "${AGENTS_DIR}/templates"
-mkdir -p "${AGENTS_DIR}/workflows"
+mkdir -p "${AGENTS_DIR}/skills"
 log "Created ~/.agents/ structure"
 
 # ─── Download domain templates ───────────────────────────────────────────────
@@ -105,12 +105,13 @@ if [[ " ${SELECTED_DOMAINS[*]} " =~ " software " ]]; then
     || warn "Failed to download CONVENTIONS-software.md"
 fi
 
-# ─── Install workflows ───────────────────────────────────────────────────────
-for wf in project-init repo-sync post-session-doc code-pipeline; do
-  curl -fsSL "${REPO_RAW}/workflows/${wf}.md" \
-    -o "${AGENTS_DIR}/workflows/${wf}.md" \
-    && log "Workflow installed: ${wf}.md" \
-    || warn "Failed to download workflow: ${wf}.md"
+# ─── Install core meta-skills ────────────────────────────────────────────────
+for skill in project-init repo-sync post-session-doc code-pipeline docs-and-sync; do
+  mkdir -p "${AGENTS_DIR}/skills/${skill}"
+  curl -fsSL "${REPO_RAW}/skills/${skill}/SKILL.md" \
+    -o "${AGENTS_DIR}/skills/${skill}/SKILL.md" \
+    && log "Skill installed: ${skill}" \
+    || warn "Failed to download skill: ${skill}"
 done
 
 # ─── Install Uncle Bob Pipeline agents (software domain) ─────────────────────

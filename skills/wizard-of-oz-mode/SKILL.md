@@ -1,17 +1,6 @@
 ---
-id: workflow-wizard-of-oz
-name: Wizard of Oz MVP Mode
-version: 1.0.0
-description: Protocolo para pivotar de pipelines automatizados a sistemas de simulación manual con fachada digital.
-tags:
-  - mvp
-  - validation
-  - architecture
-  - human-in-the-loop
-triggers:
-  - "Hagamos esto en modo 'Wizard of Oz MVP'"
-  - "Modo Mago de Oz"
-  - "Wizard of Oz spec"
+name: wizard-of-oz-mode
+description: "Protocolo para pivotar de pipelines automatizados a sistemas de simulación manual con fachada digital."
 ---
 
 # Workflow Specification: Wizard of Oz MVP Mode

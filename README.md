@@ -33,7 +33,7 @@ Most AI agent setups are either too rigid (every task requires a full plan and t
 - 🔒 **Conditional PII scanning** — Financial projects auto-trigger the PII Verifier agent
 - 🔀 **Change Classification** — Features go through the full pipeline; fixes use direct mode
 - 📋 **CONVENTIONS.md per project** — Git rules, stack, DDD settings, PII flag — all in one config file
-- 🚀 **`project-init` workflow** — Initialize any project (new or existing) with the full ASD setup in minutes
+- 🚀 **`project-init` skill** — Initialize any project (new or existing) with the full ASD setup in minutes
 
 ---
 
@@ -61,7 +61,7 @@ curl -fsSL https://raw.githubusercontent.com/ibernabel/asd-framework/main/instal
 The installer:
 1. Creates `~/.agents/` if it doesn't exist
 2. Copies the selected domain templates to `~/.agents/templates/`
-3. Copies workflows (project-init, repo-sync, post-session-doc, code-pipeline)
+3. Installs core meta-skills (`project-init`, `repo-sync`, `post-session-doc`, `code-pipeline`, `docs-and-sync`) to `~/.agents/skills/`
 4. For `software` domain: installs all 7 pipeline agents to `~/.agents/agents/`
 5. Prints post-installation instructions
 
@@ -74,7 +74,7 @@ Once installed, navigate to your project directory and run:
 /project-init
 ```
 
-The workflow will auto-detect if it's a new project, an existing one (**retrofit mode**), or a multi-vertical project, and configure everything accordingly.
+The skill will auto-detect if it's a new project, an existing one (**retrofit mode**), or a multi-vertical project, and configure everything accordingly.
 
 ---
 
@@ -138,10 +138,11 @@ my-project/
 │   │   ├── architect/      ← Mutation testing + architecture
 │   │   ├── qa/             ← QA execution
 │   │   └── pii-verifier/   ← PII scan (financial projects)
-│   └── workflows/
-│       ├── code-pipeline.md
-│       ├── repo-sync.md
-│       └── post-session-doc.md
+│   └── skills/
+│       ├── code-pipeline/
+│       ├── repo-sync/
+│       ├── post-session-doc/
+│       └── docs-and-sync/
 ├── docs/
 │   ├── planning/           ← PRD, user stories, DDD model
 │   ├── implementation/     ← Feature implementation records

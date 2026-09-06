@@ -24,7 +24,9 @@
         "versioning-guide",
         "best-practices",
         "security-compliance",
-        "secrets-management"
+        "secrets-management",
+        "code-pipeline",
+        "docs-and-sync"
       ],
       "stack_skills": {
         "typescript": [
@@ -111,7 +113,9 @@
         "to-tickets",
         "to-questionnaire",
         "setup-matt-pocock-skills",
-        "wayfinder"
+        "wayfinder",
+        "code-pipeline",
+        "docs-and-sync"
       ]
     },
     "admin": {
@@ -132,7 +136,8 @@
         "commit",
         "post-session-doc",
         "repo-sync",
-        "versioning-guide"
+        "versioning-guide",
+        "docs-and-sync"
       ],
       "default_preset_skills": [
         "invoice-generator",
@@ -148,7 +153,8 @@
         "commit",
         "post-session-doc",
         "repo-sync",
-        "versioning-guide"
+        "versioning-guide",
+        "docs-and-sync"
       ]
     },
     "ai-agent": {
@@ -173,7 +179,8 @@
         "commit",
         "post-session-doc",
         "repo-sync",
-        "versioning-guide"
+        "versioning-guide",
+        "docs-and-sync"
       ],
       "default_preset_skills": [
         "langchain",
@@ -199,7 +206,8 @@
         "commit",
         "post-session-doc",
         "repo-sync",
-        "versioning-guide"
+        "versioning-guide",
+        "docs-and-sync"
       ]
     },
     "content": {
@@ -218,7 +226,8 @@
         "email-composer",
         "commit",
         "post-session-doc",
-        "repo-sync"
+        "repo-sync",
+        "docs-and-sync"
       ],
       "default_preset_skills": [
         "social-media-writer",
@@ -232,7 +241,8 @@
         "email-composer",
         "commit",
         "post-session-doc",
-        "repo-sync"
+        "repo-sync",
+        "docs-and-sync"
       ]
     },
     "video": {
@@ -251,7 +261,8 @@
         "brand-voice-enforcer",
         "commit",
         "post-session-doc",
-        "repo-sync"
+        "repo-sync",
+        "docs-and-sync"
       ],
       "default_preset_skills": [
         "video-script-writer",
@@ -265,7 +276,8 @@
         "brand-voice-enforcer",
         "commit",
         "post-session-doc",
-        "repo-sync"
+        "repo-sync",
+        "docs-and-sync"
       ]
     }
   }

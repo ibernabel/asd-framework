@@ -1,6 +1,6 @@
 ---
-description: Entrevista interactiva (estilo Matt Pocock) para afinar un diseño, arquitectura o plan resolviendo trade-offs.
-user-invocable: true
+name: grill-me-matt
+description: "Entrevista interactiva (estilo Matt Pocock) para afinar un diseño, arquitectura o plan resolviendo trade-offs."
 ---
 
 # Workflow: Grill Me (Matt Pocock Style)

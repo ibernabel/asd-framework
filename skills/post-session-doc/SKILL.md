@@ -1,9 +1,10 @@
 ---
+name: post-session-doc
 description: Guía al agente en la creación y actualización de documentación dentro de docs/ (SSOT) al finalizar una sesión de trabajo.
 user-invocable: true
 ---
 
-# Workflow: Documentación de Fin de Sesión (Post-Session Doc)
+# Workflow: Documentación de Fin de Sesión
 
 ## Descripción
 Este workflow guía al agente o desarrollador en la creación y actualización de archivos de documentación dentro del directorio `docs/` al finalizar una sesión de trabajo. El objetivo es mantener una **Única Fuente de Verdad (SSOT)** actualizada con todos los cambios, implementaciones, soluciones de fallos (fixes) y decisiones de arquitectura tomadas.
@@ -11,7 +12,7 @@ Este workflow guía al agente o desarrollador en la creación y actualización d
 ---
 
 ## Disparador (When to run)
-Ejecutar este workflow inmediatamente al **concluir una sesión de trabajo**, previo a o durante el proceso de sincronización (`repo-sync.md`) con Git.
+Ejecutar este workflow inmediatamente al **concluir una sesión de trabajo**, previo a o durante el proceso de sincronización/commit final con Git.
 
 ---
 
@@ -44,19 +45,19 @@ Identificar los componentes modificados y clasificarlos en una o más de las sig
 
 ---
 
-## Paso 2: Generar Documentación Específica
+### Paso 2: Generar Documentación Específica
 
-### Opción A: Documentar Implementaciones (`docs/implementation/`)
+#### Opción A: Documentar Implementaciones (`docs/implementation/`)
 Si durante la sesión se creó una nueva funcionalidad, módulo o refactorización arquitectónica:
 
 1. Crear el archivo `docs/implementation/YYYY-MM-DD-[nombre-feature].md`.
 2. Estructura requerida:
    - **Objetivo:** Breve descripción del alcance y propósito.
    - **Componentes Afectados:** Lista de archivos creados/modificados.
-   - **Detalles Técnicos:** Clases, funciones, esquemas o APIs expuestas.
+   - **Detalles Técnicos:** Clases, funciones, esquemas SQL o APIs expuestas.
    - **Pruebas de Verificación:** Comandos y resultados de validación.
 
-### Opción B: Documentar Fixes y Correcciones (`docs/fixes/`)
+#### Opción B: Documentar Fixes y Correcciones (`docs/fixes/`)
 Si durante la sesión se solucionó un error o vulnerabilidad:
 
 1. Crear el archivo `docs/fixes/FIX-YYYY-MM-DD-[descripcion-bug].md`.
@@ -67,7 +68,7 @@ Si durante la sesión se solucionó un error o vulnerabilidad:
    - **Archivos Modificados:** Lista de archivos impactados.
    - **Verificación:** Pruebas unitarias o manuales ejecutadas para confirmar la solución.
 
-### Opción C: Documentar Decisiones de Arquitectura (`docs/decisions/`)
+#### Opción C: Documentar Decisiones de Arquitectura (`docs/decisions/`)
 Si se tomó una decisión estructural (cambio de patrón, nueva librería, modificación de esquema de BD):
 
 1. Crear el archivo `docs/decisions/ADR-XXX-[titulo-decision].md` (donde XXX es un correlativo numérico, ej: ADR-001).
@@ -79,7 +80,7 @@ Si se tomó una decisión estructural (cambio de patrón, nueva librería, modif
 
 ---
 
-## Paso 3: Actualizar el SSOT (`docs/README.md`)
+### Paso 3: Actualizar el SSOT y Reporte de Estado
 
 Una vez generados los documentos individuales:
 
@@ -87,16 +88,21 @@ Una vez generados los documentos individuales:
    - Agregar el enlace markdown al nuevo documento en la sección correspondiente (`Implementation`, `Bug Fixes`, `Decisions`).
    - Mantener el formato estándar de enlaces relativos (`[Título](./subdirectorio/archivo.md)`).
 
-2. **Actualizar `ROADMAP.md` (si aplica):**
-   - Marcar tareas completadas (`[x]`) y actualizar el porcentaje de avance.
+2. **Actualizar `docs/status-report.md`:**
+   - Actualizar la fecha de última actualización.
+   - Registrar la versión actual del sistema (de `version.php`).
+   - Agregar las novedades principales en la sección de estado actual o historial de cambios.
 
 ---
 
-## Paso 4: Verificación de Integridad
+### Paso 4: Verificación de Enlaces e Integridad
 
-Confirmar que la documentación creada esté completa y no contenga secretos ni PII:
+Ejecutar las comprobaciones finales:
 
 ```bash
-# Check git status to ensure all doc files are staged/tracked
-git status
+# Check git status for newly created documentation files
+git status docs/
 ```
+
+- Confirmar que no hay credenciales ni datos sensibles en la documentación recién escrita.
+- Asegurar que la codificación sea UTF-8 y la documentación en español/inglés acorde a las reglas globales del proyecto.

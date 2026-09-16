@@ -89,6 +89,7 @@ ls -d */ 2>/dev/null | grep -vE '^(node_modules|\.git|dist|build|__pycache__|\.v
    - ¿Este proyecto tiene múltiples verticales? (ej: `admin/`, `technology/`, `content/`)
    - Para cada subdirectorio relevante: ¿qué dominio ASD aplica? (software / admin / ai-agent / content / video)
    - Guardar el mapa de verticales → dominios para usar en los Pasos 6B y 6C.
+6. **Clasificación Financiera / Sensibilidad de Datos:** Si el dominio es `software`, verificar si el proyecto maneja datos financieros, créditos, transacciones o información personal de clientes para clasificarlo como `financial` (`pii: financial`) en `CONVENTIONS.md`.
 
 ---
 
@@ -105,7 +106,7 @@ ls /home/ibernabel/.agents/skills/
 
 | Dominio | Skills Clave a Garantizar |
 |---------|---------------------------|
-| `software` | `code-pipeline`, `docs-and-sync`, `prd`, `domain-modeling`, `concise-planning`, `c4-architecture`, `mermaid-diagram-specialist`, `codebase-design`, `tdd`, `code-review`, `diagnosing-bugs`, `refactor`, `test-api`, `playwright`, `pytest`, `typescript`, `frontend-design`, `api-design-principles`, `security-compliance`, `best-practices`, `performance`, `commit`, `repo-sync`, `post-session-doc`, `versioning-guide` |
+| `software` | `code-pipeline`, `code-pipeline-lite`, `docs-and-sync`, `prd`, `domain-modeling`, `concise-planning`, `c4-architecture`, `mermaid-diagram-specialist`, `codebase-design`, `tdd`, `code-review`, `diagnosing-bugs`, `refactor`, `test-api`, `playwright`, `pytest`, `typescript`, `frontend-design`, `web-design-guidelines`, `api-design-principles`, `security-compliance`, `best-practices`, `performance`, `commit`, `repo-sync`, `post-session-doc`, `versioning-guide` |
 | `admin` | `invoice-generator`, `proposal-writer`, `contract-drafter`, `client-crm-workflow`, `project-estimator`, `email-composer`, `excel-analysis`, `pdf-processing-pro`, `freelance-job-analyzer`, `meeting-insights-analyzer`, `commit`, `post-session-doc`, `repo-sync`, `versioning-guide` |
 | `ai-agent` | `langchain`, `langgraph`, `langfuse`, `langsmith-observability`, `ai-sdk-5`, `prompt-engineering`, `prompt-caching`, `autonomous-agents`, `context-window-management`, `agent-development`, `notebooklm`, `prd`, `domain-modeling`, `tdd`, `commit`, `post-session-doc`, `repo-sync`, `versioning-guide` |
 | `content` | `social-media-writer`, `content-calendar`, `hook-writer`, `seo-copywriter`, `brand-voice-enforcer`, `newsletter-composer`, `humanizer`, `audience-analyzer`, `email-composer`, `commit`, `post-session-doc`, `repo-sync` |
@@ -282,10 +283,10 @@ cp /home/ibernabel/.agents/templates/<vertical-domain-template>.md <vertical>/.a
 
 ### Paso 6C: Instalación Determinista de Skills del Proyecto
 
-Instalar las skills del dominio en el proyecto creando enlaces simbólicos en `.agents/skills/` apuntando a `~/.agents/skills/` y sincronizar automáticamente la tabla `## Auto-invoke Skills` en `.agents/AGENTS.md`:
+Instalar las skills del dominio en el proyecto como **copias físicas** en `.agents/skills/` desde `~/.agents/skills/` (reemplazando cualquier symlink previo para garantizar compatibilidad con Antigravity, Claude Code y Codex) y sincronizar automáticamente la tabla `## Auto-invoke Skills` en `.agents/AGENTS.md`:
 
 ```bash
-# Install deterministic skill preset and sync Auto-invoke table in AGENTS.md
+# Install deterministic skill preset (copies) and sync Auto-invoke table in AGENTS.md
 python3 /home/ibernabel/.agents/scripts/install_project_skills.py --project-dir . --domain <domain>
 ```
 
@@ -322,19 +323,19 @@ cp /home/ibernabel/.agents/templates/scripts/bump_version.py $SW_DIR/scripts/bum
 chmod +x $SW_DIR/scripts/bump_version.py
 ```
 
-#### 7B — Pipeline Uncle Bob: 7 Agentes
+#### 7B — Pipeline Agents: 10 Agentes (Uncle Bob Full + Pipeline Lite)
 ```bash
-# Install all 7 pipeline agents into .agents/agents/
+# Install all 10 pipeline agents into .agents/agents/
 mkdir -p $SW_DIR/.agents/agents
 
-# Copy each agent
-for AGENT in orchestrator specifier coder refactorer architect qa pii-verifier; do
+# Copy each agent (orchestrator, specifier, coder, refactorer, architect, qa, pii-verifier, planner, implementer, reviewer)
+for AGENT in orchestrator specifier coder refactorer architect qa pii-verifier planner implementer reviewer; do
   cp -r /home/ibernabel/.agents/agents/$AGENT $SW_DIR/.agents/agents/$AGENT
 done
 ```
 
-#### 7C — Skill code-pipeline
-`code-pipeline` se instala automáticamente como skill determinista en `.agents/skills/code-pipeline/` mediante `install_project_skills.py` (Paso 6C). No requiere archivos legados en `.agents/workflows/`.
+#### 7C — Skills de Pipeline
+`code-pipeline` y `code-pipeline-lite` se instalan automáticamente como skills deterministas (copias físicas) en `.agents/skills/` mediante `install_project_skills.py` (Paso 6C).
 
 #### 7D — CONVENTIONS.md del proyecto
 ```bash
@@ -344,7 +345,7 @@ cp /home/ibernabel/.agents/templates/CONVENTIONS-software.md $SW_DIR/.agents/CON
 
 Después de copiar, el agente debe **editar `CONVENTIONS.md`** completando al menos:
 - `project.name` con el nombre real del proyecto
-- `project.pii` con `false` (o `financial` si el proyecto maneja datos financieros)
+- `project.pii` con `financial` si el proyecto pertenece al sector financiero/FinTech/banca o maneja datos personales, o `false` en caso contrario.
 - `project.primary_stack` con las tecnologías del proyecto (si se conocen)
 
 #### 7E — Directorio de tests Gherkin
@@ -402,24 +403,24 @@ ls -la .agents/AGENTS.md 2>/dev/null && echo "✅ AGENTS.md" || echo "❌ AGENTS
 ls -la .agents/CONVENTIONS.md 2>/dev/null && echo "✅ CONVENTIONS.md" || echo "❌ CONVENTIONS.md MISSING" && \
 ls .agents/agents/ 2>/dev/null && echo "✅ agents/ dir" || echo "❌ agents/ dir MISSING"
 
-# ── Verificar los 7 agentes del pipeline ──────────────────────────────────
-for agent in orchestrator specifier coder refactorer architect qa pii-verifier; do
+# ── Verificar los 10 agentes del pipeline ─────────────────────────────────
+for agent in orchestrator specifier coder refactorer architect qa pii-verifier planner implementer reviewer; do
   ls .agents/agents/$agent/agent.md 2>/dev/null \
     && echo "✅ agents/$agent/agent.md" \
     || echo "❌ agents/$agent/agent.md MISSING"
 done
 
-# ── Skills del Proyecto (Symlinks) ────────────────────────────────────────
+# ── Skills del Proyecto (Copias Físicas) ───────────────────────────────────
 echo "=== SKILLS AUDIT ===" && \
-SKILLS_COUNT=$(ls -la .agents/skills/ 2>/dev/null | grep -E '^l' | wc -l) && \
+SKILLS_COUNT=$(find .agents/skills/ -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l) && \
 if [ "$SKILLS_COUNT" -gt 0 ]; then
-  echo "✅ $SKILLS_COUNT project skills linked in .agents/skills/"
+  echo "✅ $SKILLS_COUNT project skills installed (copies) in .agents/skills/"
 else
-  echo "❌ .agents/skills/ is empty or missing symlinks"
+  echo "❌ .agents/skills/ is empty or missing skills"
 fi
 
 # ── Meta-Skills Clave (.agents/skills/) ────────────────────────────────────
-for skill in code-pipeline repo-sync post-session-doc docs-and-sync; do
+for skill in code-pipeline code-pipeline-lite repo-sync post-session-doc docs-and-sync; do
   ls .agents/skills/$skill/SKILL.md 2>/dev/null \
     && echo "✅ skill: $skill" \
     || echo "❌ skill: $skill MISSING"

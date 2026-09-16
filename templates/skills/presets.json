@@ -26,6 +26,7 @@
         "security-compliance",
         "secrets-management",
         "code-pipeline",
+        "code-pipeline-lite",
         "docs-and-sync"
       ],
       "stack_skills": {
@@ -35,6 +36,7 @@
         ],
         "frontend": [
           "frontend-design",
+          "web-design-guidelines",
           "prototype",
           "react-19",
           "nextjs-15",
@@ -85,6 +87,7 @@
         "mermaid-diagram-specialist",
         "codebase-design",
         "frontend-design",
+        "web-design-guidelines",
         "prototype",
         "typescript",
         "api-design-principles",
@@ -115,6 +118,7 @@
         "setup-matt-pocock-skills",
         "wayfinder",
         "code-pipeline",
+        "code-pipeline-lite",
         "docs-and-sync"
       ]
     },

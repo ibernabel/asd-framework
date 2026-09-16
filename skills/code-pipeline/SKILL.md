@@ -49,15 +49,25 @@ Debes ejecutar rigurosamente las siguientes 5 etapas en orden, esperando a que c
 #### 5. Etapa 5: QA
 - **Invocación:** `invoke_subagent` con `TypeName: "qa"`, `Role: "QA Engineer"`.
 - **Payload:** Pasa el plan de pruebas generado en la Etapa 1 (`docs/qa/qa-plan-*.md`).
-- **Entregables requeridos:** Ejecución sistemática de todos los casos de prueba, generación del reporte formal de QA (`docs/qa/qa-report-*.md`) y actualización de documentación de estado/roadmap.
+- **Entregables requeridos:** 
+  - Ejecución sistemática de todos los casos de prueba y reporte formal de QA (`docs/qa/qa-report-*.md`).
+  - **Security & Secrets Audit obligatorio:** Verificación de no credenciales/claves API hardcodeadas, variables en `.env`, y sanitización OWASP.
+  - Actualización de documentación de estado/roadmap.
+
+#### 6. Etapa 6: PII & Secrets Verifier (Obligatorio en proyectos `financial`)
+- **Condición:** Si el proyecto está catalogado como `'financial'` o tiene `pii: financial` en `.agents/CONVENTIONS.md`.
+- **Invocación:** `invoke_subagent` con `TypeName: "pii-verifier"`, `Role: "PII & Secrets Verifier"`.
+- **Payload:** Pasa la lista de archivos modificados/creados y solicita escaneo estricto de PII de clientes, datasets/fixtures y cumplimiento Privacy-First.
+- **Entregables requeridos:** Reporte de verificación PII limpio de datos personales o credenciales antes del merge.
 
 ---
 
 ### Resumen Final al Usuario
 
-Una vez que el agente QA finalice, compila y presenta un resumen ejecutivo claro:
+Una vez que el pipeline finalice (incluyendo `pii-verifier` si el proyecto es `financial`), compila y presenta un resumen ejecutivo claro:
 1. Funcionalidades implementadas y módulos afectados.
 2. Estado consolidado de la suite de pruebas (Backend + Frontend).
 3. Métricas de cobertura y resultados de mutation testing.
-4. Dictamen del reporte de QA.
-5. Puntos o recomendaciones que el desarrollador deba validar manualmente.
+4. Dictamen del reporte de QA y Security Audit.
+5. Resultado de la verificación PII (si aplicó).
+6. Puntos o recomendaciones que el desarrollador deba validar manualmente.

@@ -29,19 +29,27 @@ Sigue este flujo de forma estricta:
    Debe escribir tests + código y no parar hasta que todo esté en verde.
 
 4. **Reviewer**  
-   Cuando el implementer termine, invoca al agente `reviewer` para una pasada rápida de limpieza, calidad y spot-check de seguridad (sin secretos ni PII expuestos).
+   Cuando el implementer termine, invoca al agente `reviewer` para:
+   - Limpieza y calidad de código (KISS & YAGNI, eliminar duplicación, mejorar nombres).
+   - **Security Audit obligatorio:** Verificar ausencia de claves API, tokens o secretos hardcodeados, uso correcto de `.env`, y sanitización básica de inputs.
 
-5. **Resumen final**  
+5. **PII & Secrets Verifier (Obligatorio en proyectos `financial`)**  
+   Si el proyecto está catalogado como `'financial'` o tiene `pii: financial` en `.agents/CONVENTIONS.md`:
+   - Invoca al agente `pii-verifier` como **último paso** antes de finalizar para realizar el escaneo estricto de PII (datos personales de clientes), credenciales y asegurar el cumplimiento del protocolo Privacy-First.
+
+6. **Resumen final**  
    Al terminar, entrega un resumen claro con:
    - Qué se implementó
    - Estado de los tests
-   - Cambios de limpieza realizados por el reviewer (KISS & YAGNI)
-   - Verificación de seguridad y secretos
+   - Cambios de limpieza realizados por el reviewer
+   - Resultado de la auditoría de seguridad (Reviewer) y verificación PII (si aplicó)
    - Puntos que debo revisar manualmente
 
 ### Reglas importantes
 - No saltes etapas.
 - El implementer solo debe ver los criterios aprobados.
+- El `reviewer` SIEMPRE ejecuta la auditoría de seguridad (Security Audit).
+- En proyectos `'financial'`, el agente `pii-verifier` es OBLIGATORIO como etapa final post-reviewer.
 - Mantén el flujo ligero y pragmático: aplica **KISS** y **YAGNI**.
 - Si la feature involucra interfaz gráfica / frontend, es obligatorio cumplir las directrices de `/frontend-design` y `/web-design-guidelines`.
 - Enfoque **Privacy-First**: jamás incluir o mockear datos reales de clientes (PII) ni comprometer secretos.

@@ -121,15 +121,23 @@ All 7 agents are available in `.agents/agents/`:
 
 ---
 
-## 🔒 PII & Secrets Verifier Activation
+## 🔒 PII & Secrets Verifier Activation (Financial Projects)
 
-Check `.agents/CONVENTIONS.md` before each pipeline run:
+Check `.agents/CONVENTIONS.md` at the start of every session or task:
 
 ```yaml
 # If this is set:
 pii: financial
-# → Activate pii-verifier agent as the final step after QA
+# → Activate pii-verifier agent as the MANDATORY FINAL STEP across all modes
 ```
+
+### Regla Estricta por Modo de Ejecución en Proyectos `financial`:
+1. **Modo Directo / General (sin pipelines formales, Antigravity, Claude Code, Codex):**
+   Tras realizar los cambios y verificar los tests/seguridad, el agente DEBE ejecutar como último paso el agente `pii-verifier` antes de dar la tarea por concluida.
+2. **Full Pipeline (`/code-pipeline`):**
+   Specifier → Coder → Refactorer → Architect → **QA (con Security Audit)** → **PII Verifier (Etapa 6 final)**.
+3. **Lite Pipeline (`/code-pipeline-lite`):**
+   Planner → Implementer → **Reviewer (con Security Audit obligatorio)** → **PII Verifier (Etapa 5 final)**.
 
 Projects that require PII & Secrets verification: any project touching user financial data, credit applications, personal identifiers, transactions, or client reports (Lender, Solufime, Consultor/technology, Corebank).
 
@@ -140,9 +148,11 @@ Projects that require PII & Secrets verification: any project touching user fina
 ```
 1. Classify change (table above)
        │
-       ├─ feature/epic ──► Create branch → /code-pipeline → PR → merge
+       ├─ feature (core/complex) ──► Create branch → /code-pipeline → [pii-verifier if financial] → PR → merge
        │
-       └─ fix/tweak/docs ──► Create branch → Direct mode → commit → PR → merge
+       ├─ feature (lite/pragmatic) ──► Create branch → /code-pipeline-lite → [pii-verifier if financial] → PR → merge
+       │
+       └─ fix/tweak/docs ──► Create branch → Direct mode → QA/Security check → [pii-verifier if financial] → commit → PR → merge
 ```
 
 **Detailed Steps (Pipeline path):**
@@ -150,11 +160,12 @@ Projects that require PII & Secrets verification: any project touching user fina
 2. **Architect reads** requirements, resolves ambiguities
 3. **Implementation.md** → technical proposal (folder hierarchy, interfaces/schemas, error handling, security)
 4. **User Approval** → no code without explicit user sign-off
-5. **Pipeline** → `/code-pipeline` (Specifier → Coder → Refactorer → Architect → QA)
-6. **PII Check** → if `pii: financial`, run `pii-verifier` agent
-7. **Walkthrough** → QA report with test commands and results
-8. **Documentation** → update `docs/` and `ROADMAP.md`
-9. **PR / Merge** → never push directly to `main`
+5. **Pipeline Execution** → `/code-pipeline` o `/code-pipeline-lite`
+6. **QA / Reviewer Security Audit** → check secrets, `.env`, input sanitization
+7. **PII Verification** → if `pii: financial`, run `pii-verifier` agent as the final gate
+8. **Walkthrough** → QA report with test commands and security results
+9. **Documentation** → update `docs/` and `ROADMAP.md`
+10. **PR / Merge** → never push directly to `main`
 
 ---
 

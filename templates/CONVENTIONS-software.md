@@ -13,8 +13,8 @@ project:
   name: "[project-name]"           # e.g. "Lender Core API"
   domain: software                 # always 'software' for this template
   vertical: "[vertical]"           # e.g. "technology", "api", "frontend" (optional)
-  pii: false                       # Set to 'financial' to activate pii-verifier in pipeline
-                                   # financial → any project touching credit, loans, personal IDs, reports
+  pii: false                       # Set to 'financial' to activate pii-verifier as final step across all modes
+                                   # financial → any project touching credit, loans, personal IDs, reports, banking
   primary_stack: []                # e.g. [nextjs, typescript, prisma, postgresql]
   secondary_stack: []              # e.g. [redis, s3, stripe]
 ```
@@ -51,20 +51,26 @@ git:
 
 ```yaml
 pipeline:
-  # Changes that MUST go through the full Uncle Bob pipeline:
-  trigger_on:
-    - feature    # new functionality
-    - epic       # major module or domain addition
+  # Changes that go through the full Uncle Bob pipeline (/code-pipeline):
+  full_pipeline_on:
+    - feature_complex # major features, core domain logic, architecture refactors
+    - epic            # major module or vertical addition
+
+  # Changes that go through Code-Pipeline-Lite (/code-pipeline-lite):
+  lite_pipeline_on:
+    - feature_lite    # self-contained features, endpoints, components
 
   # Changes that bypass the pipeline (direct mode, still require a branch):
   direct_mode_on:
-    - fix        # bug fixes
-    - tweak      # small adjustments (CSS, copy, config)
-    - docs       # documentation only
-    - chore      # dependencies, scripts, CI
+    - fix             # bug fixes
+    - tweak           # small adjustments (CSS, copy, config)
+    - docs            # documentation only
+    - chore           # dependencies, scripts, CI
 
   # Pipeline order (never skip steps):
-  # orchestrator → specifier → coder → refactorer → architect → qa → [pii-verifier if financial]
+  # Full: Specifier → Coder → Refactorer → Architect → QA (Security Audit) → [pii-verifier if financial]
+  # Lite: Planner → Implementer → Reviewer (Security Audit) → [pii-verifier if financial]
+  # Direct Mode: Changes → QA/Security Check → [pii-verifier if financial]
 ```
 
 ---

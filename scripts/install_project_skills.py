@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-Install / Link Project Skills for ASD Framework v2.
+Install / Copy Project Skills for ASD Framework v2.
 Reads deterministic presets from ~/.agents/templates/skills/presets.json,
-verifies against ~/.agents/skills/, creates symlinks in <project>/.agents/skills/,
+verifies against ~/.agents/skills/, installs physical copies in <project>/.agents/skills/
+(replacing any legacy symlinks for full Antigravity/Claude Code/Codex compatibility),
 and automatically synchronizes the ## Auto-invoke Skills table in <project>/.agents/AGENTS.md.
 
 Note: Workflows (.agents/workflows/) are deprecated in favor of skills (.agents/skills/).
-All meta-commands (code-pipeline, docs-and-sync, repo-sync, post-session-doc, etc.)
-are now managed and linked as first-class skills.
+All meta-commands (code-pipeline, code-pipeline-lite, docs-and-sync, repo-sync, post-session-doc, etc.)
+are now managed and copied as first-class skills.
 """
 
 import argparse
@@ -159,8 +160,46 @@ def cleanup_legacy_workflows(project_dir, dry_run=False):
         print(f"[ℹ️] {action_label} {len(cleaned)} broken legacy workflow symlink(s) in {target_wf_dir}: {', '.join(cleaned)}")
 
 
-def install_project_skills(project_dir, domain, stacks=None, extra_skills=None, dry_run=False, sync_md=True):
-    """Install skills via symlinks into <project>/.agents/skills/."""
+def migrate_symlinks_in_project(project_dir, dry_run=False, sync_md=True):
+    """Convert all existing symlinks in <project>/.agents/skills/ to physical copies."""
+    target_skills_dir = os.path.join(project_dir, ".agents", "skills")
+    if not os.path.exists(target_skills_dir):
+        print(f"[!] {target_skills_dir} does not exist.")
+        return []
+
+    migrated = []
+    failed = []
+    items = sorted(os.listdir(target_skills_dir))
+    for item in items:
+        target_path = os.path.join(target_skills_dir, item)
+        if os.path.islink(target_path):
+            global_skill_path = os.path.join(GLOBAL_SKILLS_DIR, item)
+            if not os.path.exists(global_skill_path):
+                print(f"[⚠️ Warning] Global skill not found for symlink '{item}' ({global_skill_path})")
+                failed.append(item)
+                continue
+            if dry_run:
+                print(f"  [DRY-RUN] Would replace symlink '{item}' with physical copy from {global_skill_path}")
+                migrated.append(item)
+            else:
+                try:
+                    os.unlink(target_path)
+                    shutil.copytree(global_skill_path, target_path, ignore_dangling_symlinks=True)
+                    migrated.append(item)
+                except Exception as e:
+                    print(f"[!] Error migrating symlink for '{item}': {e}", file=sys.stderr)
+                    failed.append(item)
+
+    action_label = "[DRY-RUN] Would convert" if dry_run else "Converted"
+    print(f"[✓] {action_label} {len(migrated)} symlink(s) to physical copies in {target_skills_dir}")
+    if sync_md and not dry_run and migrated:
+        current_skills = [d for d in os.listdir(target_skills_dir) if os.path.isdir(os.path.join(target_skills_dir, d))]
+        sync_agents_md(project_dir, current_skills)
+    return migrated
+
+
+def install_project_skills(project_dir, domain, stacks=None, extra_skills=None, dry_run=False, sync_md=True, use_symlinks=False):
+    """Install skills as physical copies into <project>/.agents/skills/."""
     target_skills_dir = os.path.join(project_dir, ".agents", "skills")
     resolved = resolve_skills(domain, stacks, extra_skills)
 
@@ -183,24 +222,27 @@ def install_project_skills(project_dir, domain, stacks=None, extra_skills=None, 
             missing_global.append(skill)
             continue
 
-        target_link_path = os.path.join(target_skills_dir, skill)
+        target_path = os.path.join(target_skills_dir, skill)
         if dry_run:
-            print(f"  [DRY-RUN] ln -sfn {global_skill_path} -> {target_link_path}")
+            action = "ln -sfn" if use_symlinks else "copy"
+            print(f"  [DRY-RUN] {action} {global_skill_path} -> {target_path}")
             installed.append(skill)
         else:
             try:
-                if os.path.islink(target_link_path) or os.path.exists(target_link_path):
-                    if os.path.islink(target_link_path):
-                        os.unlink(target_link_path)
-                    elif os.path.isdir(target_link_path):
-                        shutil.rmtree(target_link_path)
-                    else:
-                        os.remove(target_link_path)
+                if os.path.islink(target_path):
+                    os.unlink(target_path)
+                elif os.path.isdir(target_path):
+                    shutil.rmtree(target_path)
+                elif os.path.exists(target_path):
+                    os.remove(target_path)
 
-                os.symlink(global_skill_path, target_link_path)
+                if use_symlinks:
+                    os.symlink(global_skill_path, target_path)
+                else:
+                    shutil.copytree(global_skill_path, target_path, ignore_dangling_symlinks=True)
                 installed.append(skill)
             except Exception as e:
-                print(f"[!] Error creating symlink for '{skill}': {e}", file=sys.stderr)
+                print(f"[!] Error installing skill '{skill}': {e}", file=sys.stderr)
 
     if missing_global:
         print(f"\n[⚠️ Warning] The following {len(missing_global)} skills are not installed in ~/.agents/skills/:")
@@ -208,7 +250,8 @@ def install_project_skills(project_dir, domain, stacks=None, extra_skills=None, 
             print(f"    - {m}")
         print("    -> Run: python3 ~/.agents/scripts/skill_registry.py search <name> to find and install them.\n")
 
-    print(f"[✓] Successfully linked {len(installed)} skills into {target_skills_dir}")
+    mode_label = "symlinked" if use_symlinks else "copied"
+    print(f"[✓] Successfully {mode_label} {len(installed)} skills into {target_skills_dir}")
 
     # Clean up any broken legacy workflow symlinks if directory exists
     cleanup_legacy_workflows(project_dir, dry_run=dry_run)
@@ -220,7 +263,7 @@ def install_project_skills(project_dir, domain, stacks=None, extra_skills=None, 
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Deterministic Skill Linker for ASD Projects")
+    parser = argparse.ArgumentParser(description="Deterministic Skill Installer & Copier for ASD Projects")
     parser.add_argument("--project-dir", default=".", help="Project root directory (default: current dir)")
     parser.add_argument(
         "--domain",
@@ -231,12 +274,18 @@ def main():
     parser.add_argument("--skill", action="append", dest="extra_skills", help="Specific extra skill(s) to include")
     parser.add_argument("--dry-run", action="store_true", help="Simulate without writing files")
     parser.add_argument("--no-sync-md", action="store_true", help="Do not update AGENTS.md Auto-invoke table")
+    parser.add_argument("--migrate-symlinks", action="store_true", help="Convert all existing skill symlinks in project to physical copies")
+    parser.add_argument("--symlink", action="store_true", help="Use symlinks instead of physical copies (not recommended)")
     # Deprecated workflow flags preserved for backwards compatibility
     parser.add_argument("--no-workflows", action="store_true", help="[Deprecated] Workflows are no longer used; skills are installed directly.")
     parser.add_argument("--workflows-only", action="store_true", help="[Deprecated] Workflows are no longer used; skills are installed directly.")
 
     args = parser.parse_args()
     project_dir = os.path.abspath(args.project_dir)
+
+    if args.migrate_symlinks:
+        migrate_symlinks_in_project(project_dir, dry_run=args.dry_run, sync_md=not args.no_sync_md)
+        return
 
     if args.workflows_only:
         print("[ℹ️] Workflows are deprecated in favor of skills (.agents/skills/).")
@@ -245,7 +294,7 @@ def main():
         return
 
     if not args.domain:
-        parser.error("--domain is required.")
+        parser.error("--domain is required (unless using --migrate-symlinks).")
 
     install_project_skills(
         project_dir=project_dir,
@@ -254,6 +303,7 @@ def main():
         extra_skills=args.extra_skills,
         dry_run=args.dry_run,
         sync_md=not args.no_sync_md,
+        use_symlinks=args.symlink,
     )
 
 

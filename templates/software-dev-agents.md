@@ -15,10 +15,10 @@ and the **Uncle Bob Pipeline** (Orchestrator → Specifier → Coder → Refacto
 
 The agent must dynamically switch between these four mindsets:
 
-1. **Architect:** Validates `implementation.md`. Prioritizes SOLID, KISS, DRY. Reviews folder hierarchy and interface design.
+1. **Architect:** Validates `implementation.md`. Prioritizes SOLID, KISS, YAGNI, DRY. Reviews folder hierarchy and interface design.
 2. **Developer:** Writes functional code based strictly on the approved plan. **No code without approved design.**
-3. **QA:** Verifies the walkthrough. Ensures all Gherkin scenarios have passing tests. Runs `npm test`, `pytest`, or equivalent.
-4. **Security:** Audits each change for vulnerabilities. Checks session handling, secret management, input sanitization.
+3. **QA:** Verifies the walkthrough. Ensures all Gherkin scenarios have passing tests. Runs `npm test`, `pytest`, or equivalent, plus mandatory Security Check.
+4. **Security:** Audits each change for vulnerabilities. Checks session handling, secret management, input sanitization, and PII protection.
 
 ---
 
@@ -41,20 +41,20 @@ main ─────────────────────────
 
 ---
 
-## 🔀 Change Classification — Pipeline vs Direct Mode
+## 🔀 Change Classification — Full Pipeline vs Lite Pipeline vs Direct Mode
 
 Before starting any task, classify the change and select the appropriate mode:
 
 | Change Type | Examples | Mode | Agents Involved |
 |-------------|----------|------|-----------------|
-| `feature` | New endpoint, new UI component, new module | **Pipeline** (full) | orchestrator → specifier → coder → refactorer → architect → qa |
-| `epic` | New domain, full vertical, major refactor | **Pipeline** (full) | orchestrator → specifier → coder → refactorer → architect → qa |
+| `feature (core/complex)` | New domain, complex architecture, major refactor | **Pipeline (full)** | orchestrator → specifier → coder → refactorer → architect → qa |
+| `feature (lite/pragmatic)` | Self-contained feature, new UI/endpoint, mid/low complexity | **Pipeline (lite)** | planner → implementer → reviewer |
 | `fix` | Bug fix, null pointer, wrong validation | **Direct Mode** | Agent writes fix directly, then QA verifies |
 | `tweak` | CSS adjustment, copy change, config update | **Direct Mode** | Agent executes directly, no plan required |
 | `docs` | README update, ADR, docstring | **Direct Mode** | Agent writes directly |
 | `chore` | Dependency update, script, CI config | **Direct Mode** | Agent executes directly |
 
-> **Rule:** When in doubt, default to **Pipeline**. The overhead is worth the quality guarantee.
+> **Rule:** Use **Pipeline (full)** when correctness and deep verification are paramount. Use **Pipeline (lite)** when speed and pragmatic balance are needed without token overhead.
 
 ---
 
@@ -88,16 +88,24 @@ All 7 agents are available in `.agents/agents/`:
 
 ---
 
-## ✅ Quality Standards — TDD & Coverage
+## ✅ Quality Standards — TDD, YAGNI & Security
 
-- **SOLID** principles are non-negotiable
-- **KISS:** Avoid over-engineering
-- **DRY:** Extract shared logic into reusable modules
-- **TDD:** The Coder always writes tests first (Red → Green → Refactor)
+- **SOLID Principles:** Architecture foundation (clean boundaries, decoupled dependencies).
+- **KISS & YAGNI:** Non-negotiable simplicity. Build only what is needed now; reject speculative features, unnecessary indirection, or over-abstracted frameworks.
+- **DRY:** Extract shared logic into reusable modules.
+- **Mandatory Frontend & UI Standard:** Whenever creating or modifying any graphical user interface (GUI / frontend / UI), the agent MUST strictly follow the directives of:
+  - `/frontend-design` (`~/.agents/skills/frontend-design/SKILL.md`): Distinctive palettes, bespoke typography, intentional layout tokens, subject-grounded anti-generic aesthetics.
+  - `/web-design-guidelines` (`~/.agents/skills/web-design-guidelines/SKILL.md`): Accessibility, semantic structure, responsive behavior, UX ergonomics.
+- **Privacy-First & Anti-PII Protocol:**
+  - Zero tolerance for leaking customer PII (Personally Identifiable Information).
+  - **Data Inspection Rule:** When analyzing spreadsheets (`.xlsx`, `.csv`) or databases, agents MUST inspect structures, schemas, and headers FIRST before querying or loading data, explicitly omitting any columns with customer identity.
+- **TDD:** The Coder always writes tests first (Red → Green → Refactor).
 - **Coverage standard:** 100% of Gherkin scenarios defined by the Specifier MUST have passing tests.
-  Line coverage % is not enforced; scenario coverage is the quality gate.
-- Every PR-worthy change must have a `walkthrough.md`
-- Security audit on session handling, secrets, and user input
+- **Mandatory Security Audit (in QA and Reviewer):**
+  - Verify absence of hardcoded API keys, secrets, tokens, or credentials.
+  - Verify `.env` usage and ensure secrets are in `.gitignore`.
+  - Validate input sanitization (SQL injection, XSS, insecure deserialization prevention).
+- Every PR-worthy change must have a `walkthrough.md`.
 
 ---
 
@@ -113,7 +121,7 @@ All 7 agents are available in `.agents/agents/`:
 
 ---
 
-## 🔒 PII Verifier Activation
+## 🔒 PII & Secrets Verifier Activation
 
 Check `.agents/CONVENTIONS.md` before each pipeline run:
 
@@ -123,8 +131,7 @@ pii: financial
 # → Activate pii-verifier agent as the final step after QA
 ```
 
-Projects that require PII verification: any project touching user financial data,
-credit applications, personal identifiers, or reports (Lender, Solufime, Consultor/technology).
+Projects that require PII & Secrets verification: any project touching user financial data, credit applications, personal identifiers, transactions, or client reports (Lender, Solufime, Consultor/technology, Corebank).
 
 ---
 
@@ -174,6 +181,8 @@ docs/
 | `react-19` | React 19 components in `.tsx` |
 | `nextjs-15` | Next.js App Router (`app/`) |
 | `typescript` | TypeScript code in `.ts/.tsx` |
+| `frontend-design` | Mandatory whenever designing or modifying UI components, layouts, or styles |
+| `web-design-guidelines` | Mandatory review of UI code against web interface standards, UX, and accessibility |
 | `tailwind-4` | Tailwind CSS styling |
 | `zod-4` | Zod v4 schema validation |
 | `zustand-5` | Zustand state management |
@@ -184,6 +193,8 @@ docs/
 | `pytest` | pytest test files |
 | `test-api` | API test patterns |
 | `tdd` | TDD / Red-Green-Refactor workflow |
+| `code-pipeline` | Full Uncle Bob pipeline for complex features |
+| `code-pipeline-lite` | Lightweight 3-agent pipeline for medium/low complexity features |
 | `commit` | Creating git commits |
 | `code-review` | Reviewing PRs or branches |
 | `diagnosing-bugs` | Debugging hard bugs or regressions |
@@ -198,6 +209,7 @@ The following meta-skills are managed globally in `~/.agents/skills/` (`/home/ib
 |-------------------|----------------|-------------|
 | `/project-init` | `~/.agents/skills/project-init/SKILL.md` | Initialize, retrofit, or update project structure, ASD docs, and skills |
 | `/code-pipeline` | `.agents/skills/code-pipeline/SKILL.md` | Uncle Bob 7-Agent Pipeline execution |
+| `/code-pipeline-lite` | `.agents/skills/code-pipeline-lite/SKILL.md` | Lightweight 3-Agent Pipeline execution |
 | `/repo-sync` | `.agents/skills/repo-sync/SKILL.md` | SemVer bump, CHANGELOG, commit, tag, and push |
 | `/post-session-doc` | `.agents/skills/post-session-doc/SKILL.md` | Update SSOT `docs/` at end of session |
 | `/docs-and-sync` | `.agents/skills/docs-and-sync/SKILL.md` | Run `post-session-doc` followed by `repo-sync` |

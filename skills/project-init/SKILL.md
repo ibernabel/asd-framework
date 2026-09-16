@@ -89,6 +89,7 @@ ls -d */ 2>/dev/null | grep -vE '^(node_modules|\.git|dist|build|__pycache__|\.v
    - ¿Este proyecto tiene múltiples verticales? (ej: `admin/`, `technology/`, `content/`)
    - Para cada subdirectorio relevante: ¿qué dominio ASD aplica? (software / admin / ai-agent / content / video)
    - Guardar el mapa de verticales → dominios para usar en los Pasos 6B y 6C.
+6. **Clasificación Financiera / Sensibilidad de Datos:** Si el dominio es `software`, verificar si el proyecto maneja datos financieros, créditos, transacciones o información personal de clientes para clasificarlo como `financial` (`pii: financial`) en `CONVENTIONS.md`.
 
 ---
 
@@ -322,19 +323,19 @@ cp /home/ibernabel/.agents/templates/scripts/bump_version.py $SW_DIR/scripts/bum
 chmod +x $SW_DIR/scripts/bump_version.py
 ```
 
-#### 7B — Pipeline Uncle Bob: 7 Agentes
+#### 7B — Pipeline Agents: 10 Agentes (Uncle Bob Full + Pipeline Lite)
 ```bash
-# Install all 7 pipeline agents into .agents/agents/
+# Install all 10 pipeline agents into .agents/agents/
 mkdir -p $SW_DIR/.agents/agents
 
-# Copy each agent
-for AGENT in orchestrator specifier coder refactorer architect qa pii-verifier; do
+# Copy each agent (orchestrator, specifier, coder, refactorer, architect, qa, pii-verifier, planner, implementer, reviewer)
+for AGENT in orchestrator specifier coder refactorer architect qa pii-verifier planner implementer reviewer; do
   cp -r /home/ibernabel/.agents/agents/$AGENT $SW_DIR/.agents/agents/$AGENT
 done
 ```
 
-#### 7C — Skill code-pipeline
-`code-pipeline` se instala automáticamente como skill determinista en `.agents/skills/code-pipeline/` mediante `install_project_skills.py` (Paso 6C). No requiere archivos legados en `.agents/workflows/`.
+#### 7C — Skills de Pipeline
+`code-pipeline` y `code-pipeline-lite` se instalan automáticamente como skills deterministas (copias físicas) en `.agents/skills/` mediante `install_project_skills.py` (Paso 6C).
 
 #### 7D — CONVENTIONS.md del proyecto
 ```bash
@@ -344,7 +345,7 @@ cp /home/ibernabel/.agents/templates/CONVENTIONS-software.md $SW_DIR/.agents/CON
 
 Después de copiar, el agente debe **editar `CONVENTIONS.md`** completando al menos:
 - `project.name` con el nombre real del proyecto
-- `project.pii` con `false` (o `financial` si el proyecto maneja datos financieros)
+- `project.pii` con `financial` si el proyecto pertenece al sector financiero/FinTech/banca o maneja datos personales, o `false` en caso contrario.
 - `project.primary_stack` con las tecnologías del proyecto (si se conocen)
 
 #### 7E — Directorio de tests Gherkin
@@ -402,8 +403,8 @@ ls -la .agents/AGENTS.md 2>/dev/null && echo "✅ AGENTS.md" || echo "❌ AGENTS
 ls -la .agents/CONVENTIONS.md 2>/dev/null && echo "✅ CONVENTIONS.md" || echo "❌ CONVENTIONS.md MISSING" && \
 ls .agents/agents/ 2>/dev/null && echo "✅ agents/ dir" || echo "❌ agents/ dir MISSING"
 
-# ── Verificar los 7 agentes del pipeline ──────────────────────────────────
-for agent in orchestrator specifier coder refactorer architect qa pii-verifier; do
+# ── Verificar los 10 agentes del pipeline ─────────────────────────────────
+for agent in orchestrator specifier coder refactorer architect qa pii-verifier planner implementer reviewer; do
   ls .agents/agents/$agent/agent.md 2>/dev/null \
     && echo "✅ agents/$agent/agent.md" \
     || echo "❌ agents/$agent/agent.md MISSING"

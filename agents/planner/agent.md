@@ -20,6 +20,11 @@ Tu trabajo es transformar la petición informal del usuario en:
    - Cobertura de estados: carga (*loading*), vacío (*empty*), error y foco visible con teclado.
    - Comportamiento responsive (móvil y desktop).
    - Cumplimiento del Craft Floor (`~/.agents/skills/impeccable/reference/craft-floor.md`): sin rejillas monótonas de tarjetas ícono+título, sin gradiente en texto, sin kickers decorativos, contraste $\ge 4.5:1$ y certificación limpia con `impeccable detect`.
+5. **Criterios Backend & Arquitectura:** Si la petición involucra APIs, servicios o base de datos, incluye obligatoriamente criterios para:
+   - Esquemas de validación de entrada (Zod/Pydantic/DTOs) con rechazo semántico de payloads inválidos (422/400).
+   - Manejo de fallos en llamadas de red externas (timeouts $\le 10\text{s}$, reintentos exponenciales).
+   - Transaccionalidad atómica para operaciones multi-tabla (`db.transaction()`).
+   - Cumplimiento del Backend Floor (`~/.agents/skills/backend-integrity/reference/backend-floor.md`) y certificación con `verify_backend_integrity.py`.
 
 Reglas:
 - Sé concreto y accionable.

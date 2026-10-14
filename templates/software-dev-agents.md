@@ -105,6 +105,15 @@ All 7 agents are available in `.agents/agents/`:
     - Enforce the Craft Floor Checklist: contrast $\ge 4.5:1$ (body) / $\ge 3:1$ (large), visible keyboard focus, touch targets $\ge 44\times 44\text{px}$, responsive layout (mobile 390px vs desktop), interactive states (hover, loading, empty, error), and action-oriented UX copy.
     - **Blocking Gate:** If primary findings exist (`exit code 2`), the UI is **`REJECTED` (Not Certified)** and cannot pass QA or Reviewer approval until resolved.
   - Apply `/web-design-guidelines` (`~/.agents/skills/web-design-guidelines/SKILL.md`) for Web Interface Guidelines compliance.
+- **Mandatory Backend Integrity & Architecture Standard & Certification:** Whenever creating, modifying, or refactoring backend code, APIs, database queries, workers, or server endpoints (`.py`, `.ts` (non-JSX), `.js`, `.php`, `.go`, `.sql`), the agent MUST strictly enforce the **Backend Integrity Protocol**:
+  - **Pre-Implementation (Backend Floor Gate):**
+    - Consult [`backend-integrity`](file:///z:/home/ibernabel/.agents/skills/backend-integrity/SKILL.md) and read `backend-floor.md` (`~/.agents/skills/backend-integrity/reference/backend-floor.md`).
+    - Enforce the 6 rules: Zero Mass-Assignment (schema-first with Zod/Pydantic/DTOs), Transactional Atomicity for multi-table writes (`db.transaction()`), Bounded Timeouts ($\le 10\text{s}$) on all external I/O network calls, Zero N+1 with mandatory collection pagination, Layer Isolation (Clean/Hexagonal: controllers only adapt HTTP $\leftrightarrow$ Domain), and semantic HTTP error codes.
+  - **Post-Implementation (Certification Gate):**
+    - Run the mechanical detector:
+      `wsl.exe -d Ubuntu-22.04 --cd <project-path> bash -lc "~/.agents/skills/backend-integrity/scripts/verify_backend_integrity.py <target-files>"`
+    - Verify strict Type Safety (`tsc --noEmit`, `mypy`, or `pyright`) and automated tests.
+    - **Blocking Gate:** If primary architectural findings exist (`exit code 2`), the backend is **`REJECTED` (Not Certified)** and cannot pass QA or Reviewer approval until resolved.
 - **Privacy-First & Anti-PII Protocol:**
   - Zero tolerance for leaking customer PII (Personally Identifiable Information).
   - **Data Inspection Rule:** When analyzing spreadsheets (`.xlsx`, `.csv`) or databases, agents MUST inspect structures, schemas, and headers FIRST before querying or loading data, explicitly omitting any columns with customer identity.
@@ -203,6 +212,7 @@ docs/
 | `typescript` | TypeScript code in `.ts/.tsx` |
 | `frontend-design` | Mandatory whenever designing or modifying UI components, layouts, or styles |
 | `web-design-guidelines` | Mandatory review of UI code against web interface standards, UX, and accessibility |
+| `backend-integrity` | Mandatory whenever designing, modifying, or auditing backend architecture, APIs, endpoints, or DB queries |
 | `tailwind-4` | Tailwind CSS styling |
 | `zod-4` | Zod v4 schema validation |
 | `zustand-5` | Zustand state management |

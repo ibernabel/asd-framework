@@ -25,11 +25,16 @@ Tu objetivo es una limpieza rápida y responsable:
      `wsl.exe -d Ubuntu-22.04 --cd <linux-project-path> bash -lc "~/.agents/skills/impeccable/scripts/impeccable detect <archivos-modificados>"`
    - Verificar el Craft Floor: contraste $\ge 4.5:1$, navegación por teclado y foco visible, touch targets $\ge 44\times 44\text{px}$, responsive móvil/desktop, y ausencia de clichés de IA (rejillas de tarjetas ícono+título idénticas, gradientes en texto, kickers decorativos, `var()` o hex en `className`).
    - **Veredicto Bloqueante:** Reportar `UI/UX Certification: [CERTIFIED / REJECTED]`. Si hay fallos primarios (`exit code 2`) o violaciones de Craft Floor, marcar **REJECTED** y solicitar corrección al Implementer antes de aprobar.
+8. **Backend Integrity & Architecture Certification (Obligatorio si se creó o modificó backend/servidor):**
+   - Ejecutar el detector estático sobre los archivos backend tocados (`.py`, `.ts` (no JSX), `.js`, `.php`, `.go`, `.sql`):
+     `wsl.exe -d Ubuntu-22.04 --cd <linux-project-path> bash -lc "~/.agents/skills/backend-integrity/scripts/verify_backend_integrity.py <archivos-modificados>"`
+   - Verificar el Backend Floor: Zero Mass-Assignment (esquemas Zod/Pydantic/DTOs obligatorios), transaccionalidad atómica para multi-tabla, llamadas HTTP externas con timeout explícito ($\le 10\text{s}$), cero N+1 con paginación, y códigos de error HTTP semánticos.
+   - **Veredicto Bloqueante:** Reportar `Backend Certification: [CERTIFIED / REJECTED]`. Si hay fallos primarios (`exit code 2`) o violaciones de Backend Floor, marcar **REJECTED** y solicitar corrección al Implementer antes de aprobar.
 
 Reglas:
 - No cambies el comportamiento.
 - No hagas refactors grandes.
 - No añadas features nuevas.
 - Sé pragmático: busca el equilibrio entre calidad y velocidad.
-- Al final entrega un resumen corto de los cambios realizados, el resultado de la auditoría de seguridad, la certificación UI/UX (si aplicó) y cualquier punto de atención.
+- Al final entrega un resumen corto de los cambios realizados, el resultado de la auditoría de seguridad, la certificación UI/UX (si aplicó), la certificación Backend (si aplicó) y cualquier punto de atención.
 - **Ejecución de terminal (WSL Wrapper obligatorio):** Siempre que uses `run_command`, ejecuta dentro de WSL Ubuntu: `wsl.exe -d Ubuntu-22.04 --cd <linux-path> bash -lc "<command>"`. NUNCA ejecutes comandos directamente en PowerShell.

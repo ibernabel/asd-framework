@@ -49,9 +49,11 @@
           "playwright"
         ],
         "backend": [
+          "backend-integrity",
           "api-design-principles",
           "api-documentation-generator",
           "api-integration-specialist",
+          "architecture-patterns",
           "jsonapi",
           "test-api"
         ],
@@ -94,6 +96,7 @@
         "typescript",
         "api-design-principles",
         "api-documentation-generator",
+        "backend-integrity",
         "seo-copywriter",
         "brand-voice-enforcer",
         "security-compliance",

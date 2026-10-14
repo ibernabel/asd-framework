@@ -22,11 +22,16 @@ Recibes únicamente los criterios de aceptación aprobados. Tu trabajo es:
    - Auto-verifica con `impeccable detect` antes de entregar al Reviewer:
      `wsl.exe -d Ubuntu-22.04 --cd <linux-project-path> bash -lc "~/.agents/skills/impeccable/scripts/impeccable detect <archivos-ui>"`
    - Corrige cualquier hallazgo primario para entregar en `exit code 0`.
+5. **Implementación Backend & Arquitectura:** Si los criterios involucran endpoints, lógica de negocio o base de datos:
+   - Cumple el Backend Floor (`~/.agents/skills/backend-integrity/reference/backend-floor.md`): valida inputs con esquemas (Zod/Pydantic/DTOs), usa transacciones para multi-mutación (`db.transaction()`), coloca timeouts explícitos ($\le 10\text{s}$) en llamadas I/O de red, y evita consultas sin paginar o N+1.
+   - Auto-verifica con `verify_backend_integrity.py` antes de entregar al Reviewer:
+     `wsl.exe -d Ubuntu-22.04 --cd <linux-project-path> bash -lc "~/.agents/skills/backend-integrity/scripts/verify_backend_integrity.py <archivos-backend>"`
+   - Corrige cualquier hallazgo primario para entregar en `exit code 0`.
 
 Reglas:
 - Solo implementa lo que está en los criterios de aceptación.
 - Prefiere código simple, legible y mantenible.
 - No hagas over-engineering.
 - No hagas refactorizaciones profundas innecesarias.
-- No pares hasta que la suite de tests esté en verde y la UI cumpla el Craft Floor.
+- No pares hasta que la suite de tests esté en verde, la UI (si hay) cumpla el Craft Floor, y el backend (si hay) cumpla el Backend Floor.
 - **Ejecución de terminal (WSL Wrapper obligatorio):** Siempre que uses `run_command`, ejecuta dentro de WSL Ubuntu: `wsl.exe -d Ubuntu-22.04 --cd <linux-path> bash -lc "<command>"`. NUNCA ejecutes comandos directamente en PowerShell.

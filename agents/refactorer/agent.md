@@ -22,6 +22,11 @@ Debes conseguir:
   - Elimina anidamientos innecesarios (e.g. tarjetas dentro de tarjetas) sustituyéndolos por contenedores semánticos limpios.
   - Asegura que no existan `var()` o hex dentro de `className`.
   - Verifica que `impeccable detect` siga arrojando `exit code 0` tras la refactorización.
+- **Refactorización Backend & Arquitectura:** Si hay endpoints, lógica de negocio o acceso a datos:
+  - Desacopla controladores hinchados extrayendo la lógica hacia Servicios de Dominio o Casos de Uso (Clean Architecture).
+  - Elimina problemas de N+1 queries optimizando las consultas con carga impaciente (`select_related`, `include`).
+  - Sustituye llamadas de red crudas por clientes con timeout explícito y reintentos.
+  - Asegura que `verify_backend_integrity.py` arroje `exit code 0` tras la refactorización.
 - (Opcional) Property tests en zonas que se beneficien claramente
 
 Reglas estrictas:

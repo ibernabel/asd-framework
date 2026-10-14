@@ -19,6 +19,9 @@ Tu única responsabilidad es transformar especificaciones informales del usuario
    - Incluye escenarios Gherkin para todos los estados de la interfaz: estado vacío (*empty state*), estado de carga (*loading*), estado de error, hover y foco con teclado.
    - Especifica el comportamiento responsive (móvil 390px vs desktop).
    - En el documento de procedimientos de QA (`docs/qa/qa-plan-*.md`), incluye siempre la sección obligatoria `UI/UX Craft & Accessibility Verification` indicando la ejecución de `impeccable detect` y la revisión contra el Craft Floor (`~/.agents/skills/impeccable/reference/craft-floor.md`).
+5. **Especificaciones Backend & Arquitectura:** Si el requerimiento involucra endpoints, servicios o base de datos:
+   - Incluye escenarios Gherkin para: validación de esquemas (payloads inválidos retornando 422/400), idempotencia, manejo de fallos de red/timeouts de terceros (retornando 502/503/504), y permisos (401/403).
+   - En el documento de procedimientos de QA (`docs/qa/qa-plan-*.md`), incluye siempre la sección obligatoria `Backend Integrity & Architecture Verification` indicando la ejecución de `verify_backend_integrity.py` y la revisión contra el Backend Floor (`~/.agents/skills/backend-integrity/reference/backend-floor.md`).
 
 Reglas estrictas:
 - Nunca escribas código de producción.

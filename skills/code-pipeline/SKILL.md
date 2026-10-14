@@ -34,12 +34,14 @@ Debes ejecutar rigurosamente las siguientes 5 etapas en orden, esperando a que c
 #### 2. Etapa 2: Coder
 - **Invocación:** `invoke_subagent` con `TypeName: "coder"`, `Role: "TDD Coder"`.
 - **Payload:** Pasa la ruta de los archivos Gherkin y los objetivos de implementación.
-- **Entregables requeridos:** Tests de aceptación que implementan el Gherkin, tests unitarios exhaustivos y código de producción que deje toda la suite en verde (100% passing). Si involucra UI/Frontend, aplicar el **Craft Floor** desde el inicio (sin `var()` ni hex en `className`, sin rejillas de tarjetas idénticas, con todos los estados interactivos) y auto-verificar con `impeccable detect`.
+- **Entregables requeridos:** Tests de aceptación que implementan el Gherkin, tests unitarios exhaustivos y código de producción que deje toda la suite en verde (100% passing).
+  - Si involucra UI/Frontend: aplicar el **Craft Floor** desde el inicio y auto-verificar con `impeccable detect`.
+  - Si involucra Backend/Servidor: aplicar el **Backend Floor** (esquemas Zod/Pydantic/DTOs, transacciones en multi-tabla, timeouts $\le 10\text{s}$ en I/O externo, paginación, no bare except) y auto-verificar con `verify_backend_integrity.py`.
 
 #### 3. Etapa 3: Refactorer
 - **Invocación:** `invoke_subagent` con `TypeName: "refactorer"`, `Role: "Code Refactorer"`.
 - **Payload:** Pasa las rutas de los archivos modificados/creados por el Coder.
-- **Entregables requeridos:** Código limpio, sin duplicaciones, con complejidad ciclomática reducida (CRAP ≤ 6), resolución de especificidad CSS en UI y preservando la suite de tests en verde.
+- **Entregables requeridos:** Código limpio, sin duplicaciones, con complejidad ciclomática reducida (CRAP ≤ 6), resolución de especificidad CSS en UI, desacoplamiento de controladores en backend y preservando la suite de tests en verde.
 
 #### 4. Etapa 4: Architect / Hardener
 - **Invocación:** `invoke_subagent` con `TypeName: "architect"`, `Role: "Architecture Hardener"`.
@@ -52,7 +54,8 @@ Debes ejecutar rigurosamente las siguientes 5 etapas en orden, esperando a que c
 - **Entregables requeridos:** 
   - Ejecución sistemática de todos los casos de prueba y reporte formal de QA (`docs/qa/qa-report-*.md`).
   - **Security & Secrets Audit obligatorio:** Verificación de no credenciales/claves API hardcodeadas, variables en `.env`, y sanitización OWASP.
-  - **UI/UX Craft & Accessibility Certification (Obligatorio si se tocó Frontend):** Ejecución de `impeccable detect <archivos-ui>` y verificación contra el Craft Floor (contraste $\ge 4.5:1$, foco visible, touch targets $\ge 44\text{px}$, responsive móvil/desktop, estados vacíos/error/carga). **Compuerta Bloqueante:** Si hay fallos primarios (`exit code 2`), la UI se marca como `REJECTED` y no se aprueba el entregable.
+  - **UI/UX Craft & Accessibility Certification (Obligatorio si se tocó Frontend):** Ejecución de `impeccable detect <archivos-ui>` y verificación contra el Craft Floor. **Compuerta Bloqueante:** Si hay fallos primarios (`exit code 2`), la UI se marca como `REJECTED`.
+  - **Backend Integrity & Architecture Certification (Obligatorio si se tocó Backend):** Ejecución de `verify_backend_integrity.py <archivos-backend>` y verificación contra el Backend Floor. **Compuerta Bloqueante:** Si hay fallos primarios (`exit code 2`), el backend se marca como `REJECTED`.
   - Actualización de documentación de estado/roadmap.
 
 #### 6. Etapa 6: PII & Secrets Verifier (Obligatorio en proyectos `financial`)
@@ -69,6 +72,6 @@ Una vez que el pipeline finalice (incluyendo `pii-verifier` si el proyecto es `f
 1. Funcionalidades implementadas y módulos afectados.
 2. Estado consolidado de la suite de pruebas (Backend + Frontend).
 3. Métricas de cobertura y resultados de mutation testing.
-4. Dictamen del reporte de QA, Security Audit y Certificación UI/UX Craft (si aplicó).
+4. Dictamen del reporte de QA, Security Audit, Certificación UI/UX (si aplicó) y Certificación Backend Integrity (si aplicó).
 5. Resultado de la verificación PII (si aplicó).
 6. Puntos o recomendaciones que el desarrollador deba validar manualmente.

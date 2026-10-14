@@ -108,7 +108,7 @@ ls /home/ibernabel/.agents/skills/
 
 | Dominio | Skills Clave a Garantizar |
 |---------|---------------------------|
-| `software` | `code-pipeline`, `code-pipeline-lite`, `docs-and-sync`, `prd`, `domain-modeling`, `concise-planning`, `c4-architecture`, `mermaid-diagram-specialist`, `codebase-design`, `tdd`, `code-review`, `diagnosing-bugs`, `refactor`, `test-api`, `playwright`, `pytest`, `typescript`, `frontend-design`, `impeccable`, `web-design-guidelines`, `api-design-principles`, `security-compliance`, `best-practices`, `performance`, `commit`, `repo-sync`, `post-session-doc`, `versioning-guide` |
+| `software` | `code-pipeline`, `code-pipeline-lite`, `docs-and-sync`, `prd`, `domain-modeling`, `concise-planning`, `c4-architecture`, `mermaid-diagram-specialist`, `codebase-design`, `tdd`, `code-review`, `diagnosing-bugs`, `refactor`, `test-api`, `playwright`, `pytest`, `typescript`, `frontend-design`, `impeccable`, `web-design-guidelines`, `backend-integrity`, `api-design-principles`, `security-compliance`, `best-practices`, `performance`, `commit`, `repo-sync`, `post-session-doc`, `versioning-guide` |
 | `admin` | `invoice-generator`, `proposal-writer`, `contract-drafter`, `client-crm-workflow`, `project-estimator`, `email-composer`, `excel-analysis`, `pdf-processing-pro`, `freelance-job-analyzer`, `meeting-insights-analyzer`, `commit`, `post-session-doc`, `repo-sync`, `versioning-guide` |
 | `ai-agent` | `langchain`, `langgraph`, `langfuse`, `langsmith-observability`, `ai-sdk-5`, `prompt-engineering`, `prompt-caching`, `autonomous-agents`, `context-window-management`, `agent-development`, `notebooklm`, `prd`, `domain-modeling`, `tdd`, `commit`, `post-session-doc`, `repo-sync`, `versioning-guide` |
 | `content` | `social-media-writer`, `content-calendar`, `hook-writer`, `seo-copywriter`, `brand-voice-enforcer`, `newsletter-composer`, `humanizer`, `audience-analyzer`, `email-composer`, `commit`, `post-session-doc`, `repo-sync` |
@@ -449,6 +449,11 @@ echo "=== UI/UX CRAFT TOOLING AUDIT ===" && \
 ls .agents/skills/impeccable/SKILL.md 2>/dev/null && echo "✅ skill: impeccable present" || echo "⚠️  skill: impeccable not installed (required if project has frontend)" && \
 ls .agents/skills/impeccable/scripts/impeccable 2>/dev/null && echo "✅ impeccable CLI launcher ready" || echo "⚠️  impeccable CLI launcher not found"
 
+# ── Backend Integrity Tooling ───────────────────────────────────────────
+echo "=== BACKEND INTEGRITY TOOLING AUDIT ===" && \
+ls .agents/skills/backend-integrity/SKILL.md 2>/dev/null && echo "✅ skill: backend-integrity present" || echo "⚠️  skill: backend-integrity not installed (required if project has backend)" && \
+ls .agents/skills/backend-integrity/scripts/verify_backend_integrity.py 2>/dev/null && echo "✅ verify_backend_integrity.py ready" || echo "⚠️  verify_backend_integrity.py not found"
+
 # ── Limpieza de Workflows Legados ─────────────────────────────────────────
 if [ -d ".agents/workflows" ]; then
   LEGACY_WFS=$(ls .agents/workflows/*.md 2>/dev/null | wc -l)
@@ -505,6 +510,7 @@ Al terminar la auditoría, el agente debe producir un resumen en este formato:
 | agents/ (10 agentes) | ✅/❌ | Listar cuáles faltan si aplica |
 | Meta-Skills (.agents/skills/) | ✅/❌ | code-pipeline, repo-sync, post-session-doc, docs-and-sync |
 | UI/UX Craft Tooling (impeccable) | ✅/⚠️ | Requerido en proyectos con UI/frontend |
+| Backend Integrity Tooling (backend-integrity) | ✅/⚠️ | Requerido en proyectos con backend/APIs |
 | docs/ (6 subdirectorios) | ✅/❌ | |
 | VERSION | ✅/❌ | |
 | scripts/bump_version.py | ✅/❌ | |

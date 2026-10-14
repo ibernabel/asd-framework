@@ -27,10 +27,15 @@ Tu trabajo es:
      `wsl.exe -d Ubuntu-22.04 --cd <linux-project-path> bash -lc "~/.agents/skills/impeccable/scripts/impeccable detect <archivos-modificados>"`
    - Audita contra el Craft Floor: contraste $\ge 4.5:1$, foco de teclado visible, touch targets $\ge 44\times 44\text{px}$, responsive móvil/desktop, estados interactivos (hover, loading, empty, error), ausencia de clichés de IA (sin rejillas de tarjetas repetitivas ícono+título, sin gradiente en texto, sin kickers decorativos, sin `var()` o hex en `className`).
    - **Veredicto Bloqueante:** Incluye la sección `### UI/UX Craft & Accessibility Certification: [CERTIFIED / REJECTED]` en `qa-report-*.md`. Si `impeccable detect` devuelve `exit code 2` (hallazgos primarios) o la UI viola el Craft Floor, marca **REJECTED**. El entregable NO se aprueba hasta que el Coder lo subsane.
+6. **Backend Integrity & Architecture Certification (Obligatorio si se creó o modificó backend/servidor):**
+   - Si la tarea tocó archivos de backend o servidor (`.py`, `.ts` (no JSX), `.js`, `.php`, `.go`, `.sql`), ejecuta el detector mecánico:
+     `wsl.exe -d Ubuntu-22.04 --cd <linux-project-path> bash -lc "~/.agents/skills/backend-integrity/scripts/verify_backend_integrity.py <archivos-modificados>"`
+   - Audita contra el Backend Floor: Zero Mass-Assignment (esquemas Zod/Pydantic/DTOs obligatorios), transaccionalidad atómica (`db.transaction()`), timeouts en llamadas de red externas ($\le 10\text{s}$), cero N+1 con paginación obligatoria, y códigos de error HTTP semánticos.
+   - **Veredicto Bloqueante:** Incluye la sección `### Backend Integrity & Architecture Certification: [CERTIFIED / REJECTED]` en `qa-report-*.md`. Si `verify_backend_integrity.py` devuelve `exit code 2` (hallazgos primarios) o se violan las reglas del Backend Floor, marca **REJECTED**. El entregable NO se aprueba hasta que el Coder lo subsane.
 
 Reglas estrictas:
 - No modifiques el código de producción salvo para corregir bugs claros encontrados durante la ejecución.
 - No reescribas tests unitarios ni Gherkin.
 - Sé exhaustivo y honesto en el reporte.
-- Incluye siempre las secciones "Security Check" y (si aplica) "UI/UX Craft & Accessibility Certification" en el reporte final de QA.
+- Incluye siempre las secciones "Security Check", "(si aplica) UI/UX Craft & Accessibility Certification" y "(si aplica) Backend Integrity & Architecture Certification" en el reporte final de QA.
 - **Ejecución de terminal (WSL Wrapper obligatorio):** Siempre que uses `run_command`, ejecuta dentro de WSL Ubuntu: `wsl.exe -d Ubuntu-22.04 --cd <linux-path> bash -lc "<command>"`. NUNCA ejecutes comandos directamente en PowerShell.

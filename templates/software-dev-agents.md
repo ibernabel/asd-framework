@@ -93,9 +93,18 @@ All 7 agents are available in `.agents/agents/`:
 - **SOLID Principles:** Architecture foundation (clean boundaries, decoupled dependencies).
 - **KISS & YAGNI:** Non-negotiable simplicity. Build only what is needed now; reject speculative features, unnecessary indirection, or over-abstracted frameworks.
 - **DRY:** Extract shared logic into reusable modules.
-- **Mandatory Frontend & UI Standard:** Whenever creating or modifying any graphical user interface (GUI / frontend / UI), the agent MUST strictly follow the directives of:
-  - `/frontend-design` (`~/.agents/skills/frontend-design/SKILL.md`): Distinctive palettes, bespoke typography, intentional layout tokens, subject-grounded anti-generic aesthetics.
-  - `/web-design-guidelines` (`~/.agents/skills/web-design-guidelines/SKILL.md`): Accessibility, semantic structure, responsive behavior, UX ergonomics.
+- **Mandatory Frontend & UI Standard & Certification:** Whenever creating, modifying, or refactoring any graphical user interface (React, Astro, Vue, Svelte, or Vanilla HTML/CSS/JS), the agent MUST strictly enforce the **UI/UX Craft & Certification Protocol**:
+  - **Pre-Implementation (Craft Floor Gate):**
+    - Apply `/frontend-design` (`~/.agents/skills/frontend-design/SKILL.md`) and read `craft-floor.md` (`~/.agents/skills/impeccable/reference/craft-floor.md`).
+    - Define a token system (4-6 semantic hex colors, 2+ typography roles, Signature Element) and determine surface mode (`Persuade`, `Operate`, `Read`, `Experience`).
+    - Refuse AI-slop anti-patterns: no repetitive icon+title+text card grids, no gradient text, no eyebrows above headings, no unneeded section numbering, no zero-blur box shadows outside neobrutalism.
+    - Zero `var()` or raw hex in `className` (Tailwind / semantic CSS classes only).
+  - **Post-Implementation (Certification Gate):**
+    - Run the mechanical detector:
+      `wsl.exe -d Ubuntu-22.04 --cd <project-path> bash -lc "~/.agents/skills/impeccable/scripts/impeccable detect <target-files>"`
+    - Enforce the Craft Floor Checklist: contrast $\ge 4.5:1$ (body) / $\ge 3:1$ (large), visible keyboard focus, touch targets $\ge 44\times 44\text{px}$, responsive layout (mobile 390px vs desktop), interactive states (hover, loading, empty, error), and action-oriented UX copy.
+    - **Blocking Gate:** If primary findings exist (`exit code 2`), the UI is **`REJECTED` (Not Certified)** and cannot pass QA or Reviewer approval until resolved.
+  - Apply `/web-design-guidelines` (`~/.agents/skills/web-design-guidelines/SKILL.md`) for Web Interface Guidelines compliance.
 - **Privacy-First & Anti-PII Protocol:**
   - Zero tolerance for leaking customer PII (Personally Identifiable Information).
   - **Data Inspection Rule:** When analyzing spreadsheets (`.xlsx`, `.csv`) or databases, agents MUST inspect structures, schemas, and headers FIRST before querying or loading data, explicitly omitting any columns with customer identity.

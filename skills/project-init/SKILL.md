@@ -55,18 +55,20 @@ echo "Detected mode: $MODE"
 
 Usado cuando el proyecto ya tiene código activo, commits y estructura. **No se modifica nada existente sin autorización.**
 
-**Pasos que se SALTAN en modo retrofit:**
-- Paso 2 (GitHub + Git init) — el repo ya existe
-- `.gitignore` — si ya existe, no se sobreescribe (se hace merge no destructivo)
-- `README.md` — no se sobreescribe si ya existe
+**Pasos que se SALTAN o se ejecutan en modo NO DESTRUCTIVO en retrofit y update:**
+- Paso 2 (GitHub + Git init) — el repo ya existe (saltar)
+- `.gitignore` — si ya existe, no se sobreescribe (merge no destructivo)
+- `README.md` — no se sobreescribe si ya existe (preservar)
+- `.agents/AGENTS.md` — **NUNCA sobreescribir si ya existe**. En proyectos configurados o con reglas personalizadas/referencias cruzadas (Cross-Project References), sobreescribir destruye contexto. En modo retrofit/update, solo se sincroniza la tabla `## Auto-invoke Skills` mediante `install_project_skills.py` (Paso 6C), preservando todas las demás secciones intactas.
+- `.agents/CONVENTIONS.md` — **NUNCA sobreescribir si ya existe**. Preservar la identidad, stack y convenciones del proyecto.
 
 **Pasos que SÍ se ejecutan en modo retrofit y update:**
 - Skill Inventory Check y Preset Resolution (Paso 1B)
 - Detección de verticales (Paso 1, punto 3-4)
 - Creación de `docs/` y subcarpetas faltantes (sin tocar los existentes)
-- Paso 6A/6B: `.agents/AGENTS.md` por dominio/vertical
-- Paso 6C: **Instalación de Skills del Proyecto vía symlinks y sincronización de AGENTS.md**
-- Paso 7 completo (si dominio = software): agentes, CONVENTIONS.md, code-pipeline skill, tests/
+- Paso 6A/6B: `.agents/AGENTS.md` SOLO si no existe previamente
+- Paso 6C: **Instalación de Skills del Proyecto (copias físicas) y sincronización de AGENTS.md**
+- Paso 7 (si software): instalar agentes faltantes en `.agents/agents/`, crear `VERSION` y `CONVENTIONS.md` SOLO si no existen, `code-pipeline` y directorios faltantes
 - Paso 8: verificación de meta-skills y auditoría post-ejecución
 
 ---
@@ -106,7 +108,7 @@ ls /home/ibernabel/.agents/skills/
 
 | Dominio | Skills Clave a Garantizar |
 |---------|---------------------------|
-| `software` | `code-pipeline`, `code-pipeline-lite`, `docs-and-sync`, `prd`, `domain-modeling`, `concise-planning`, `c4-architecture`, `mermaid-diagram-specialist`, `codebase-design`, `tdd`, `code-review`, `diagnosing-bugs`, `refactor`, `test-api`, `playwright`, `pytest`, `typescript`, `frontend-design`, `web-design-guidelines`, `api-design-principles`, `security-compliance`, `best-practices`, `performance`, `commit`, `repo-sync`, `post-session-doc`, `versioning-guide` |
+| `software` | `code-pipeline`, `code-pipeline-lite`, `docs-and-sync`, `prd`, `domain-modeling`, `concise-planning`, `c4-architecture`, `mermaid-diagram-specialist`, `codebase-design`, `tdd`, `code-review`, `diagnosing-bugs`, `refactor`, `test-api`, `playwright`, `pytest`, `typescript`, `frontend-design`, `impeccable`, `web-design-guidelines`, `api-design-principles`, `security-compliance`, `best-practices`, `performance`, `commit`, `repo-sync`, `post-session-doc`, `versioning-guide` |
 | `admin` | `invoice-generator`, `proposal-writer`, `contract-drafter`, `client-crm-workflow`, `project-estimator`, `email-composer`, `excel-analysis`, `pdf-processing-pro`, `freelance-job-analyzer`, `meeting-insights-analyzer`, `commit`, `post-session-doc`, `repo-sync`, `versioning-guide` |
 | `ai-agent` | `langchain`, `langgraph`, `langfuse`, `langsmith-observability`, `ai-sdk-5`, `prompt-engineering`, `prompt-caching`, `autonomous-agents`, `context-window-management`, `agent-development`, `notebooklm`, `prd`, `domain-modeling`, `tdd`, `commit`, `post-session-doc`, `repo-sync`, `versioning-guide` |
 | `content` | `social-media-writer`, `content-calendar`, `hook-writer`, `seo-copywriter`, `brand-voice-enforcer`, `newsletter-composer`, `humanizer`, `audience-analyzer`, `email-composer`, `commit`, `post-session-doc`, `repo-sync` |
@@ -244,12 +246,16 @@ Generar `docs/README.md` con el índice del SSOT y enlaces a cada subdirectorio.
 
 ### Paso 6A: Configuración de Reglas del Agente — Proyecto de Dominio Único
 
-Copiar la plantilla del dominio seleccionado a `.agents/AGENTS.md`:
+Copiar la plantilla del dominio seleccionado a `.agents/AGENTS.md` (**solo si no existe**):
 
 ```bash
-# Create .agents directory and copy domain template
+# Create .agents directory and copy domain template only if not already present
 mkdir -p .agents
-cp /home/ibernabel/.agents/templates/<domain-template>.md .agents/AGENTS.md
+if [ ! -f .agents/AGENTS.md ]; then
+  cp /home/ibernabel/.agents/templates/<domain-template>.md .agents/AGENTS.md
+else
+  echo "ℹ️  .agents/AGENTS.md ya existe — preservando reglas y referencias existentes."
+fi
 ```
 
 Mapa de templates:
@@ -265,18 +271,26 @@ Mapa de templates:
 
 Para proyectos con múltiples verticales (ej: Consultor):
 
-1. Copiar la plantilla del dominio primario a la raíz:
+1. Copiar la plantilla del dominio primario a la raíz (**solo si no existe**):
 ```bash
-# Set root-level AGENTS.md (primary domain)
+# Set root-level AGENTS.md (primary domain) only if not already present
 mkdir -p .agents
-cp /home/ibernabel/.agents/templates/<primary-domain-template>.md .agents/AGENTS.md
+if [ ! -f .agents/AGENTS.md ]; then
+  cp /home/ibernabel/.agents/templates/<primary-domain-template>.md .agents/AGENTS.md
+else
+  echo "ℹ️  .agents/AGENTS.md raíz ya existe — preservando reglas."
+fi
 ```
 
-2. Para **cada vertical** identificada en el Paso 1, colocar el `AGENTS.md` correspondiente:
+2. Para **cada vertical** identificada en el Paso 1, colocar el `AGENTS.md` correspondiente (**solo si no existe**):
 ```bash
-# Configure each vertical with its domain-specific rules
+# Configure each vertical with its domain-specific rules (only if not existing)
 mkdir -p <vertical>/.agents
-cp /home/ibernabel/.agents/templates/<vertical-domain-template>.md <vertical>/.agents/AGENTS.md
+if [ ! -f <vertical>/.agents/AGENTS.md ]; then
+  cp /home/ibernabel/.agents/templates/<vertical-domain-template>.md <vertical>/.agents/AGENTS.md
+else
+  echo "ℹ️  <vertical>/.agents/AGENTS.md ya existe — preservando reglas y referencias cruzadas."
+fi
 ```
 
 ---
@@ -339,11 +353,15 @@ done
 
 #### 7D — CONVENTIONS.md del proyecto
 ```bash
-# Copy CONVENTIONS template and open for project-specific configuration
-cp /home/ibernabel/.agents/templates/CONVENTIONS-software.md $SW_DIR/.agents/CONVENTIONS.md
+# Copy CONVENTIONS template ONLY if it does not already exist
+if [ ! -f $SW_DIR/.agents/CONVENTIONS.md ]; then
+  cp /home/ibernabel/.agents/templates/CONVENTIONS-software.md $SW_DIR/.agents/CONVENTIONS.md
+else
+  echo "ℹ️  $SW_DIR/.agents/CONVENTIONS.md ya existe — preservando identidad y convenciones."
+fi
 ```
 
-Después de copiar, el agente debe **editar `CONVENTIONS.md`** completando al menos:
+Si el archivo es nuevo (recién copiado), el agente debe **editar `CONVENTIONS.md`** completando al menos:
 - `project.name` con el nombre real del proyecto
 - `project.pii` con `financial` si el proyecto pertenece al sector financiero/FinTech/banca o maneja datos personales, o `false` en caso contrario.
 - `project.primary_stack` con las tecnologías del proyecto (si se conocen)
@@ -426,6 +444,11 @@ for skill in code-pipeline code-pipeline-lite repo-sync post-session-doc docs-an
     || echo "❌ skill: $skill MISSING"
 done
 
+# ── UI/UX Craft & Certification Tooling ──────────────────────────────────
+echo "=== UI/UX CRAFT TOOLING AUDIT ===" && \
+ls .agents/skills/impeccable/SKILL.md 2>/dev/null && echo "✅ skill: impeccable present" || echo "⚠️  skill: impeccable not installed (required if project has frontend)" && \
+ls .agents/skills/impeccable/scripts/impeccable 2>/dev/null && echo "✅ impeccable CLI launcher ready" || echo "⚠️  impeccable CLI launcher not found"
+
 # ── Limpieza de Workflows Legados ─────────────────────────────────────────
 if [ -d ".agents/workflows" ]; then
   LEGACY_WFS=$(ls .agents/workflows/*.md 2>/dev/null | wc -l)
@@ -479,8 +502,9 @@ Al terminar la auditoría, el agente debe producir un resumen en este formato:
 | Skills Vinculadas (.agents/skills/) | ✅/❌ | Total de skills enlazadas |
 | Auto-invoke Skills (AGENTS.md) | ✅/❌ | Tabla sincronizada |
 | CONVENTIONS.md | ✅/❌ | |
-| agents/ (7 agentes) | ✅/❌ | Listar cuáles faltan si aplica |
+| agents/ (10 agentes) | ✅/❌ | Listar cuáles faltan si aplica |
 | Meta-Skills (.agents/skills/) | ✅/❌ | code-pipeline, repo-sync, post-session-doc, docs-and-sync |
+| UI/UX Craft Tooling (impeccable) | ✅/⚠️ | Requerido en proyectos con UI/frontend |
 | docs/ (6 subdirectorios) | ✅/❌ | |
 | VERSION | ✅/❌ | |
 | scripts/bump_version.py | ✅/❌ | |

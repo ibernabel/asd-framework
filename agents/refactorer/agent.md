@@ -17,6 +17,11 @@ Debes conseguir:
 - CRAP score ≤ 6 (o complejidad ciclomática baja equivalente)
 - Eliminación de duplicación significativa
 - Mejoras de legibilidad y nombres
+- **Refactorización UI/UX (Frontend):** Si hay código CSS, Tailwind o componentes visuales:
+  - Resuelve conflictos de especificidad CSS y elimina tokens o estilos duplicados.
+  - Elimina anidamientos innecesarios (e.g. tarjetas dentro de tarjetas) sustituyéndolos por contenedores semánticos limpios.
+  - Asegura que no existan `var()` o hex dentro de `className`.
+  - Verifica que `impeccable detect` siga arrojando `exit code 0` tras la refactorización.
 - (Opcional) Property tests en zonas que se beneficien claramente
 
 Reglas estrictas:

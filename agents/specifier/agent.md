@@ -15,6 +15,10 @@ Tu única responsabilidad es transformar especificaciones informales del usuario
 1. Tareas claras y discretas.
 2. Archivos Gherkin (`.feature`) bien estructurados, no redundantes y ejecutables.
 3. Procedimientos de QA orientados al usuario (paso a paso, en lenguaje natural).
+4. **Especificaciones UI/UX (Frontend):** Si el requerimiento involucra vistas o componentes de interfaz:
+   - Incluye escenarios Gherkin para todos los estados de la interfaz: estado vacío (*empty state*), estado de carga (*loading*), estado de error, hover y foco con teclado.
+   - Especifica el comportamiento responsive (móvil 390px vs desktop).
+   - En el documento de procedimientos de QA (`docs/qa/qa-plan-*.md`), incluye siempre la sección obligatoria `UI/UX Craft & Accessibility Verification` indicando la ejecución de `impeccable detect` y la revisión contra el Craft Floor (`~/.agents/skills/impeccable/reference/craft-floor.md`).
 
 Reglas estrictas:
 - Nunca escribas código de producción.

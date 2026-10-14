@@ -36,6 +36,7 @@
         ],
         "frontend": [
           "frontend-design",
+          "impeccable",
           "web-design-guidelines",
           "prototype",
           "react-19",
@@ -87,6 +88,7 @@
         "mermaid-diagram-specialist",
         "codebase-design",
         "frontend-design",
+        "impeccable",
         "web-design-guidelines",
         "prototype",
         "typescript",

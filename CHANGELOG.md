@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.5.1] - 2026-10-19
+
+### Changed
+- **Documentation**: Updated `README.md` to reflect all v0.5.0 features and integrations (10 pipeline agents, dual pipelines, UI/UX craft and backend integrity certification gates, financial PII protocol, ecosystem sync, and skill registries).
+- **Humanizer**: Applied `humanizer` standards to eliminate AI-generated writing patterns, emoji noise, and inflated corporate language in favor of a clean, natural developer voice.
+
 ## [0.5.0] - 2026-10-14
 
 ### Added

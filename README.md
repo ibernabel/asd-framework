@@ -1,195 +1,297 @@
-# ASD Framework — Agent-Driven Structured Development
+# ASD Framework
 
-> **The framework for human-AI pair programming that actually scales.**
+> Agent-Driven Structured Development for human-AI pair programming.
 
-ASD is a practical meta-framework that lets you work with AI coding agents across **multiple domains** — software development, business administration, content creation, video production, and AI agents — with the right level of rigor for each context.
+ASD gives AI coding agents structured operating constraints across five domains: software engineering, business operations, content, video production, and autonomous AI agents.
 
-Stop fighting your AI agent. Give it a structured operating system.
+AI agents often swing between two extremes. Without guardrails, they hallucinate dependencies, skip tests, write bloated controllers, and push unverified changes straight to `main`. But excessive process is just as bad: nobody wants to write an exhaustive PRD for a two-line CSS fix. 
 
----
-
-## Why ASD?
-
-Most AI agent setups are either too rigid (every task requires a full plan and tests) or too loose (the agent does whatever it wants). ASD solves this with **adaptive execution scopes**:
-
-| Domain | Mode | What it means |
-|--------|------|---------------|
-| 🔧 Software Dev | Planning Mode (Strict) | Full pipeline: Gherkin → TDD → Refactor → QA |
-| 🤖 AI Agents | Planning Mode (Strict) | Prompt versioning, eval datasets, guardrails |
-| 💼 Business Admin | Admin Mode | Double-check financials, zero PII in git |
-| 📣 Content & Brand | Fast Mode | Direct execution, no overhead |
-| 🎬 Video Production | Fast Mode | Templates, no planning friction |
-
-**One framework. Five domains. Zero bloat.**
+ASD replaces arbitrary agent behavior with domain-specific execution modes and automated quality gates.
 
 ---
 
-## Key Features
+## Execution scopes
 
-- 🏗️ **Uncle Bob Pipeline** — 7 specialized AI agents: Orchestrator → Specifier → Coder → Refactorer → Architect → QA → PII Verifier
-- 🌿 **Mandatory Git branching** — Never commit to `main`. The agent refuses without an active branch.
-- 🧪 **Gherkin-based TDD** — Coverage is measured by scenario pass rate, not line %, powered by the Specifier agent
-- 📁 **Multi-vertical support** — One project, multiple domains (e.g., Consultor: admin + software + content)
-- 🔒 **Conditional PII scanning** — Financial projects auto-trigger the PII Verifier agent
-- 🔀 **Change Classification** — Features go through the full pipeline; fixes use direct mode
-- 📋 **CONVENTIONS.md per project** — Git rules, stack, DDD settings, PII flag — all in one config file
-- 🚀 **`project-init` skill** — Initialize any project (new or existing) with the full ASD setup in minutes
+| Domain | Mode | Execution style | Quality gates |
+|--------|------|-----------------|---------------|
+| Software | Planning Mode (Strict) | Full Uncle Bob Pipeline or Code Pipeline Lite; Gherkin TDD | UI craft check, backend integrity check, security audit, PII scan |
+| AI Agents | Planning Mode (Strict) | Prompt versioning, evaluation datasets, guardrails | Behavioral regression suite |
+| Business Admin | Admin Mode | Scoped checklists, delivery summaries | Financial double-check, zero customer data in git |
+| Content & Brand | Fast Mode | Direct execution, platform formatting | Brand voice guidelines, humanizer review |
+| Video Production | Fast Mode | Scripts, shot lists, metadata | Template verification, direct delivery |
 
 ---
 
-## Quick Start
+## What ASD does
 
-### Install all domains
+- **Dual development pipelines**: For complex features, `/code-pipeline` runs an orchestrated pipeline with dedicated roles (Specifier, Coder, Refactorer, Architect, QA, and PII Verifier). For smaller, self-contained tasks, `/code-pipeline-lite` provides a faster 3-stage flow (Planner, Implementer, Reviewer).
+- **Automated UI craft gate (`impeccable`)**: Before writing interface code, agents review the Craft Floor guidelines (design tokens, typography hierarchy, responsive breakpoints, avoiding AI-slop patterns like gradient text and repetitive icon cards). After coding, `impeccable detect` scans the UI. Any primary defect blocks QA approval.
+- **Automated backend integrity gate (`backend-integrity`)**: Enforces clean architecture boundaries, schema-first input validation (Zod, Pydantic, DTOs), explicit database transactions on multi-table writes, bounded network timeouts ($\le 10\text{s}$), and no unpaginated collection queries. Verified through `verify_backend_integrity.py`.
+- **Privacy-first financial protocol**: Projects marked with `pii: financial` in `CONVENTIONS.md` automatically run the `pii-verifier` agent as the final check across all execution modes. Agents inspect database and spreadsheet structures first, omitting personal data columns from data analysis.
+- **Built-in security audits**: Both QA and Reviewer agents check for hardcoded secrets, verify `.env` handling, and check input sanitization before approving any pull request.
+- **Branch protection**: Agents refuse to work on `main` or `develop`. All work happens on dedicated branches (`feature/[domain]-[description]`).
+- **Gherkin acceptance criteria**: Pass rate on acceptance scenarios determines when a feature is done, rather than arbitrary line coverage percentages.
+- **Physical skill distribution**: Skills are installed as physical copies in `.agents/skills/` instead of symlinks, ensuring Antigravity, Claude Code, Cursor, and Windsurf read them without path resolution issues.
+- **WSL Ubuntu environment support**: On Windows systems, development and test commands execute inside WSL Ubuntu 22.04 through standard wrappers rather than raw PowerShell.
+- **Ecosystem synchronization**: The `sync_agents_ecosystem.py` script keeps framework templates, global skills, and active project directories in sync.
+
+---
+
+## Quick start
+
+### 1. Install the framework
+
+To install all domains globally in `~/.agents/`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ibernabel/asd-framework/main/install.sh | bash
 ```
 
-### Install a specific domain
+Or install specific domains:
 
 ```bash
 # Software development only
 curl -fsSL https://raw.githubusercontent.com/ibernabel/asd-framework/main/install.sh | bash -s -- --domain software
 
-# Content + Admin (e.g., a blog-based business)
-curl -fsSL https://raw.githubusercontent.com/ibernabel/asd-framework/main/install.sh | bash -s -- --domain content --domain admin
+# Software + Business Admin
+curl -fsSL https://raw.githubusercontent.com/ibernabel/asd-framework/main/install.sh | bash -s -- --domain software --domain admin
 
 # All domains
 curl -fsSL https://raw.githubusercontent.com/ibernabel/asd-framework/main/install.sh | bash -s -- --domain all
 ```
 
 The installer:
-1. Creates `~/.agents/` if it doesn't exist
-2. Copies the selected domain templates to `~/.agents/templates/`
-3. Installs core meta-skills (`project-init`, `repo-sync`, `post-session-doc`, `code-pipeline`, `docs-and-sync`) to `~/.agents/skills/`
-4. For `software` domain: installs all 7 pipeline agents to `~/.agents/agents/`
-5. Prints post-installation instructions
+1. Creates the `~/.agents/` directory structure.
+2. Copies selected domain templates to `~/.agents/templates/`.
+3. Installs core meta-skills (`project-init`, `code-pipeline`, `code-pipeline-lite`, `repo-sync`, `post-session-doc`, `docs-and-sync`, `backend-integrity`) to `~/.agents/skills/`.
+4. Deploys the 10 pipeline agents to `~/.agents/agents/` for the software domain.
 
-### Initialize a project
+### 2. Initialize or retrofit a project
 
-Once installed, navigate to your project directory and run:
+Open your AI coding environment (Antigravity, Claude Code, Cursor, or Windsurf) in your project directory and run:
 
 ```bash
-# In your AI agent IDE (Antigravity, Cursor, Claude Code, etc.)
 /project-init
 ```
 
-The skill will auto-detect if it's a new project, an existing one (**retrofit mode**), or a multi-vertical project, and configure everything accordingly.
+The initialization skill detects your project state automatically:
+- **Init Mode**: Empty directory. Sets up Git, private GitHub repository, `.gitignore`, canonical `docs/` hierarchy, `AGENTS.md`, `CONVENTIONS.md`, deterministic skills, and pipeline agents.
+- **Retrofit Mode**: Existing repository without ASD. Injects the ASD structure and skills without altering your existing codebase.
+- **Update Mode**: Existing ASD project. Updates skills, agent personas, and documentation standards while preserving your custom project rules and conventions.
 
 ---
 
-## The Uncle Bob Pipeline (Software Domain)
+## How the software pipelines work
 
-Inspired by Robert C. Martin's philosophy of quality through constraints, not willpower:
+ASD provides two execution pipelines depending on task scope:
+
+### 1. Full Uncle Bob Pipeline (`/code-pipeline`)
+
+Recommended for core domain logic, architectural additions, and complex features:
 
 ```
 /code-pipeline
       │
-      ├─► Specifier    → Converts requirements to Gherkin .feature files + QA procedures
-      ├─► Coder        → TDD: writes failing tests first, then makes them pass
-      ├─► Refactorer   → Reduces complexity (CRAP ≤ 6), eliminates duplication
-      ├─► Architect    → Mutation testing + coverage + architecture review
-      └─► QA           → Executes QA procedures, reports results
+      ├─► 1. Specifier      → Writes Gherkin .feature files + QA test procedures
+      ├─► 2. Coder          → TDD: writes failing tests first, then implementation
+      │                       Enforces UI Craft Floor & Backend Floor during coding
+      ├─► 3. Refactorer     → Reduces complexity (CRAP ≤ 6), removes duplication
+      ├─► 4. Architect      → Mutation testing, coverage review, boundary checks
+      └─► 5. QA             → Executes QA test plan
+                │             • Security & secrets check
+                │             • UI craft certification (impeccable detect)
+                │             • Backend integrity certification (verify_backend_integrity.py)
                 │
-                └─► [Optional] PII Verifier → Scans for PII leaks (financial projects)
+                └─► 6. [If pii: financial]
+                    PII Verifier → Scans diffs and datasets for customer data leaks
 ```
 
-**Git rule:** Every change lives on a branch. `feature/[domain]-[description]`. No exceptions.
+### 2. Code Pipeline Lite (`/code-pipeline-lite`)
+
+Recommended for isolated endpoints, components, and minor features:
+
+```
+/code-pipeline-lite
+      │
+      ├─► 1. Planner        → Extracts clear acceptance criteria and edge cases
+      │                       (Pauses for user sign-off before code is written)
+      ├─► 2. Implementer    → Writes tests + implementation against approved criteria
+      │                       Applies UI Craft Floor & Backend Floor
+      └─► 3. Reviewer       → Code cleanup, test run, security audit
+                │             • Security & secrets check
+                │             • UI craft certification
+                │             • Backend integrity certification
+                │
+                └─► 4. [If pii: financial]
+                    PII Verifier → Scans for customer data before merge
+```
+
+### 3. Change classification
+
+| Change type | When to use | Workflow |
+|-------------|-------------|----------|
+| Complex feature | Core business logic, major models, architecture changes | `/code-pipeline` |
+| Lite feature | Isolated endpoints, UI components, small utilities | `/code-pipeline-lite` |
+| Bug fix | Defect repairs, regression fixes | Branch + direct fix + QA check |
+| Tweak / Docs / Chore | Copy adjustments, CSS tweaks, documentation, dependencies | Branch + direct fix + QA check |
+
+Every path requires an active git branch, passes a security check, runs the PII verifier if financial, and produces a conventional commit before opening a pull request.
 
 ---
 
-## Recommended: Matt Pocock's Skills
+## The 10 pipeline agents
 
-ASD works best when combined with [Matt Pocock's skills](https://github.com/mattpocock/skills) — a collection of AI agent skills that complement the ASD workflow perfectly:
+Located in `.agents/agents/`:
 
-| Matt's Skill | How it fits with ASD |
-|-------------|----------------------|
-| `grill-with-docs` | Kick off a grilling session with your docs before any major design decision |
-| `grilling` / `grill-me` | Stress-test a plan before writing the `implementation.md` |
-| `domain-modeling` | Build the DDD ubiquitous language for your `ROADMAP.md` |
-| `brainstorming` | Explore requirements before the Specifier writes Gherkin |
-| `to-spec` / `to-tickets` | Convert informal ideas to actionable specs |
-| `implement` | Execute a plan with agent guardrails |
-| `refactor` | Surgical refactoring with intent |
-| `prototype` | Sanity-check a design before committing to it |
-
-Install Matt's skills:
-```bash
-# Via setup-matt-pocock-skills or see:
-# https://github.com/mattpocock/skills
-```
+| Agent | Scope | Responsibility |
+|-------|-------|----------------|
+| `orchestrator` | Pipeline | Coordinates sequential execution of multi-agent workflows. |
+| `specifier` | Full Pipeline | Writes Gherkin acceptance criteria, edge cases, and QA test plans. |
+| `coder` | Full Pipeline | Writes failing tests first, then writes minimal code to pass them. |
+| `refactorer` | Full Pipeline | Cleans code smells, removes duplicate logic, and keeps CRAP scores $\le 6$. |
+| `architect` | Full Pipeline | Runs mutation tests, reviews architecture boundaries, and checks test coverage. |
+| `qa` | Full Pipeline | Executes QA procedures, audits security, and validates certification gates. |
+| `planner` | Lite Pipeline | Converts loose requirements into concise, reviewable acceptance criteria. |
+| `implementer` | Lite Pipeline | Implements approved acceptance criteria with accompanying unit tests. |
+| `reviewer` | Lite Pipeline | Reviews code quality, checks security, and enforces certification gates. |
+| `pii-verifier` | Full / Lite / Direct | Scans code, fixtures, and queries for customer data and credentials. |
 
 ---
 
-## Project Structure (Software Domain)
+## Automated quality gates
 
-After running `/project-init` for a software project:
+ASD uses deterministic, scriptable checks to catch common agent mistakes:
+
+### UI craft gate (`impeccable`)
+- **Design rules**: Agents follow `/frontend-design` and the Craft Floor reference. The rules ban common AI interface habits: gradient text, unnecessary card grids, decorative section badges, and raw hex codes in markup.
+- **Verification**: Run `impeccable detect <files>`.
+- **Standards**: WCAG AA contrast ratio ($\ge 4.5:1$ body / $\ge 3:1$ large), minimum $44\times 44\text{px}$ touch targets, responsive layouts tested at 390px and desktop sizes, visible focus rings, and proper empty, loading, and error states.
+- **Enforcement**: Any primary finding stops QA or Reviewer approval until fixed.
+
+### Backend integrity gate (`backend-integrity`)
+- **Design rules**: Agents follow `/backend-integrity` and the Backend Floor reference.
+- **Core checks**:
+  1. Input validation: Request bodies and parameters must match typed schemas before reaching domain logic (Zod, Pydantic, DTOs).
+  2. Transactions: Operations mutating two or more tables must run inside a transaction (`db.transaction()`).
+  3. Timeouts: All external network calls must set explicit timeouts ($\le 10\text{s}$).
+  4. Query limits: No unbounded collection queries; pagination is required.
+  5. Layer isolation: Controllers handle HTTP transport only; business logic stays in domain services.
+  6. Structured errors: No silent exception suppression (`except: pass`); errors map to explicit HTTP status codes.
+- **Verification**: Run `verify_backend_integrity.py <files>`.
+- **Enforcement**: Exit code 2 blocks QA or Reviewer approval until resolved.
+
+### Privacy and PII gate
+- When `pii: financial` is set in `CONVENTIONS.md`, the `pii-verifier` agent runs before completing any task.
+- Agents inspect database schemas and file headers before running queries, excluding customer identity columns from data exploration.
+
+---
+
+## Core commands and meta-skills
+
+Centralized in `~/.agents/skills/` and available across projects:
+
+| Command / Skill | Scope | Description |
+|-----------------|-------|-------------|
+| `/project-init` | Global | Initialize, retrofit, or update project structure, ASD docs, and skills |
+| `/code-pipeline` | Project | Run full Uncle Bob pipeline (Specifier → Coder → Refactorer → Architect → QA) |
+| `/code-pipeline-lite` | Project | Run lightweight pipeline (Planner → Implementer → Reviewer) |
+| `/backend-integrity` | Project / Global | Audit backend code against architecture and integrity rules |
+| `/humanizer` | Project / Global | Remove AI-generated writing patterns and improve natural voice |
+| `/repo-sync` | Project | Bump SemVer, update CHANGELOG, commit, tag, and push |
+| `/post-session-doc` | Project | Save session notes and deliverables into canonical `docs/` |
+| `/docs-and-sync` | Project | Run `/post-session-doc` followed by `/repo-sync` |
+| `/domain-modeling` | Project | Build ubiquitous language, bounded contexts, and ADR drafts |
+| `/grilling` | Project | Interactive interview to pressure-test architecture plans before coding |
+| `/ask-the-council` | Project | Multi-perspective evaluation using five advisor roles and a coordinator |
+| `/wizard-of-oz-mode` | Project | Simulate end-to-end automation with a manual facade for quick testing |
+
+---
+
+## Project structure
+
+Running `/project-init` on a software project sets up this structure:
 
 ```
 my-project/
 ├── .agents/
-│   ├── AGENTS.md           ← ASD rules for this project (software-dev-agents.md)
-│   ├── CONVENTIONS.md      ← Git rules, stack, DDD, PII flag
-│   ├── agents/
-│   │   ├── orchestrator/   ← Pipeline coordinator
-│   │   ├── specifier/      ← Gherkin + QA procedures
-│   │   ├── coder/          ← TDD implementation
-│   │   ├── refactorer/     ← Complexity reduction
-│   │   ├── architect/      ← Mutation testing + architecture
-│   │   ├── qa/             ← QA execution
-│   │   └── pii-verifier/   ← PII scan (financial projects)
-│   └── skills/
+│   ├── AGENTS.md               ← Project agent rules and Auto-invoke Skills table
+│   ├── CONVENTIONS.md          ← Project stack, git rules, pipeline settings, PII flag
+│   ├── agents/                 ← 10 pipeline agent definitions
+│   │   ├── orchestrator/
+│   │   ├── specifier/
+│   │   ├── coder/
+│   │   ├── refactorer/
+│   │   ├── architect/
+│   │   ├── qa/
+│   │   ├── planner/
+│   │   ├── implementer/
+│   │   ├── reviewer/
+│   │   └── pii-verifier/
+│   └── skills/                 ← Physical copies of project skills
 │       ├── code-pipeline/
+│       ├── code-pipeline-lite/
+│       ├── backend-integrity/
+│       ├── humanizer/
 │       ├── repo-sync/
 │       ├── post-session-doc/
 │       └── docs-and-sync/
-├── docs/
-│   ├── planning/           ← PRD, user stories, DDD model
-│   ├── implementation/     ← Feature implementation records
-│   ├── testing/            ← Gherkin .feature files, QA reports
-│   ├── decisions/          ← ADRs
-│   ├── fixes/              ← Bug fix records
-│   └── knowledges/         ← Learned patterns, known issues
+├── docs/                       ← Canonical documentation (SSOT)
+│   ├── README.md               ← Documentation index
+│   ├── planning/               ← PRD, user stories, domain ubiquitous language
+│   ├── implementation/         ← Phase records and feature technical specs
+│   ├── testing/                ← QA test plans, test reports, Gherkin specs
+│   ├── decisions/              ← Architecture Decision Records (ADRs)
+│   ├── fixes/                  ← Bug fix records
+│   └── knowledges/             ← Learned project patterns and known issues
 ├── tests/
-│   └── features/           ← .feature files (Gherkin)
+│   └── features/               ← Gherkin .feature files
 ├── scripts/
-│   └── bump_version.py     ← SemVer version management
-├── VERSION                 ← Current version (e.g. 0.1.0)
-├── ROADMAP.md              ← Milestones + DDD: Domain, Bounded Contexts
+│   └── bump_version.py         ← SemVer versioning script
+├── VERSION                     ← Current version (e.g. 0.5.0)
+├── ROADMAP.md                  ← Milestones and bounded contexts
 └── README.md
 ```
 
 ---
 
-## Documentation
+## Skill ecosystem and registries
 
-- [Concepts: Execution Scopes](./docs/concepts/execution-scopes.md)
-- [Concepts: Uncle Bob Pipeline](./docs/concepts/uncle-bob-pipeline.md)
-- [Concepts: Multi-Vertical Projects](./docs/concepts/multi-vertical.md)
-- [Domain: Software Development](./docs/domains/software.md)
-- [Domain: Business Admin](./docs/domains/admin.md)
-- [Domain: Content & Brand](./docs/domains/content.md)
-- [Domain: Video Production](./docs/domains/video.md)
-- [Domain: AI Agents](./docs/domains/ai-agent.md)
-- [ADR-001: ASD Framework v2 Multi-Domain](./docs/decisions/ADR-001-asd-framework-v2-multi-domain.md)
-- [ADR-002: Uncle Bob Pipeline Integration](./docs/decisions/ADR-002-uncle-bob-pipeline-software-domain.md)
+ASD supports discovery, installation, and management through registries documented in [SKILL_REGISTRIES.md](SKILL_REGISTRIES.md):
+
+- **[Skills Marketplace (SkillsMP)](https://skillsmp.com)**: Searchable catalog of agent skills accessible via REST API (`SKILLSMP_API_KEY`).
+- **[Antigravity Skills](https://github.com/rmyndharis/antigravity-skills)**: Backend, distributed systems, and DevOps skills.
+- **[Skills.md](https://skills.md)**: Agent tools for repository automation and content workflows.
+- **[Matt Pocock's Skills](https://github.com/mattpocock/skills)**: Skills for `grilling`, `domain-modeling`, `to-spec`, `refactor`, and `prototype`.
+- **[Cathy Kim SemVer](https://github.com/cathy-kim/skill-semver)**: SemVer standards and release automation.
+
+Use `scripts/skill_registry.py` to search and install skills from connected registries:
+
+```bash
+# Search for skills across registries
+python3 scripts/skill_registry.py search "fastapi"
+
+# Install a skill into the ecosystem
+python3 scripts/skill_registry.py install "fastapi"
+```
 
 ---
 
 ## Compatibility
 
-ASD is designed to work with any AI coding agent IDE that supports `AGENTS.md` or `CLAUDE.md` style rules:
+ASD works with AI coding environments that support project-level instructions:
 
-- ✅ **Antigravity** (Google DeepMind) — primary platform
-- ✅ **Claude Code** (Anthropic)
-- ✅ **Cursor**
-- ✅ **Windsurf**
-- ✅ Any IDE that reads `.agents/AGENTS.md`
+| Environment | Status | Details |
+|-------------|:------:|---------|
+| **Google Antigravity** | Supported (Primary) | Full support for `.agents/`, subagents, and slash commands |
+| **Claude Code** | Supported | Reads `.agents/AGENTS.md` and physical skills |
+| **Cursor** | Supported | Uses project rules and `.agents/CONVENTIONS.md` |
+| **Windsurf** | Supported | Reads workspace configuration and `.agents/skills/` |
+| **WSL Ubuntu 22.04** | Native | Commands run in WSL through PowerShell wrappers |
 
 ---
 
 ## License
 
-MIT © [Idequel Bernabel](https://github.com/ibernabel)
+MIT License © [Idequel Bernabel](https://github.com/ibernabel).
 
-Skills by [Matt Pocock](https://github.com/mattpocock/skills) are his own and distributed under his license.
+Community skills from [Matt Pocock](https://github.com/mattpocock/skills) and other contributors are subject to their respective licenses.

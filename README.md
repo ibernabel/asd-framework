@@ -1,6 +1,6 @@
 # ASD Framework
 
-> **Agent-Driven Structured Development** — The open governance and engineering methodology for human-AI pair programming.
+> Agent-Driven Structured Development (ASD): engineering discipline and workflow guardrails for human-AI pair programming.
 
 <div align="center">
 
@@ -8,104 +8,88 @@
 [![Version](https://img.shields.io/badge/version-0.6.0-green.svg)](VERSION)
 [![Harness Compatibility](https://img.shields.io/badge/harness-universal-purple.svg)](#universal-ai-harness-compatibility)
 
-**[ English ]** · **[[Español](README.es.md)]**
+[English](README.md) · [Español](README.es.md)
 
 </div>
 
 ---
 
-ASD gives AI coding agents structured operating constraints across five domains: **software engineering**, **autonomous AI agents**, **business administration**, **content & brand**, and **video production**.
+ASD sets practical operating boundaries for AI coding agents across five domains: software engineering, autonomous agents, business operations, content, and video production.
 
-AI coding agents often swing between two extremes:
-- **Without guardrails**, they hallucinate dependencies, skip tests, write bloated controllers, and push unverified changes straight to `main`.
-- **With excessive bureaucracy**, they drown developers in 20-page requirement documents for two-line CSS fixes.
+Left on their own, coding agents routinely hallucinate imports, skip test suites, stuff business logic into controllers, and push unverified changes straight to `main`. But locking them behind 20-page requirement documents for a small CSS fix is just as counterproductive.
 
-ASD replaces arbitrary prompt guesswork with **domain-specific execution pipelines**, **deterministic quality gates**, and **automated testing**.
+ASD balances speed and discipline with domain-specific pipelines, scripted quality checks, and strict branch protection.
 
 ---
 
 ## What is ASD?
 
-ASD is **not** a runtime software library (like React, Laravel, or Django). Your application code never imports ASD, and it adds zero overhead to your production bundle.
+ASD is an engineering workflow and governance layer, not a software library you import into your application code. Your production app never touches ASD; it exists entirely to keep your AI coding assistants disciplined.
 
-Instead, ASD is a **methodological and governance framework** for agentic software engineering—the AI-era equivalent of what Extreme Programming (XP) and Agile were for human software teams:
+It applies three core principles to everyday development:
 
-- **Inversion of Control (IoC) for LLMs**: In an unconstrained chat, the AI decides arbitrarily how to proceed. Under ASD, the framework retains control over the lifecycle. It dictates which agent persona executes (`Specifier` → `Coder` → `Refactorer` → `Architect` → `QA`), which quality gates must pass, and what artifacts must be produced before moving forward. The agent executes within boundaries; the framework owns the workflow.
-- **Agentic Governance & Quality Layer**: Acts as an automated gatekeeper preventing common AI anti-patterns: unvalidated inputs, bypassed unit tests, bloated controllers, direct pushes to `main`, and customer data or credential leaks.
-- **Universal Harness Abstraction**: Rather than locking your project into a single AI tool, ASD maintains a single source of truth in `.agents/` and automatically synchronizes native harness bridges for Antigravity, Claude Code, Cursor, Windsurf, and GitHub Copilot.
-
----
-
-## Who is ASD for?
-
-### 🛠️ For Traditional Software Engineers (Hand-Coders)
-> *"I want AI acceleration, but I refuse to let it generate sloppy, untested spaghetti code."*
-
-If you care about Clean Architecture, SOLID principles, and test-driven development, ASD is built for you. The AI acts as a disciplined junior engineer under your direct architectural supervision:
-- Enforces strict TDD: tests are written first, and implementation code only passes when tests turn green.
-- Caps code complexity (CRAP score $\le 6$).
-- Enforces backend database transactions, schema validation (Zod, Pydantic, DTOs), and bounded network timeouts.
-
-### 🚀 For Developers Starting with AI
-> *"I don't know how to write 50-line prompts or catch subtle AI hallucinations."*
-
-You don't need complex prompt engineering gymnastics. ASD provides intuitive, battle-tested slash commands:
-- Simply type `/code-pipeline-lite <your feature>` in your AI tool.
-- The agent analyzes your requirements, extracts acceptance criteria, and **pauses to ask for your sign-off** before writing a single line of code.
-- If the AI makes a mistake, the automated quality gates catch and reject it before it ever reaches git.
-
-### 👥 For Engineering Teams & Tech Leads
-> *"Every developer on my team uses a different AI tool, resulting in inconsistent code quality and conventions."*
-
-ASD establishes a single, unified standard across your entire organization:
-- **One Source of Truth (`.agents/`)**: Repository rules, coding conventions, and agent definitions are version-controlled in git.
-- **Multi-Tool Interoperability**: Teammates can use Claude Code, Cursor, Windsurf, Copilot, or Antigravity simultaneously without configuration drift.
-- **Audit-Ready Pull Requests**: Every change branch undergoes security checks, regression tests, and optional financial/PII compliance scanning before opening a PR.
+- **Inversion of control for agents**: In a standard chat session, the model decides what to do next. ASD reverses this: the framework dictates the steps (`Specifier` → `Coder` → `Refactorer` → `Architect` → `QA`), pauses for human approval, and requires green tests before moving forward. The agent writes the code, but the workflow controls the lifecycle.
+- **Deterministic quality gates**: Scripted checks catch problems before code gets committed: missing schema validation, unpaginated queries, multi-table writes without transactions, leaky credentials, and broken UI accessibility.
+- **Universal harness sync**: Keep your conventions in one place (`.agents/`). ASD automatically generates and updates configuration files for Antigravity, Claude Code, Cursor, Windsurf, and GitHub Copilot so everyone on the team stays aligned.
 
 ---
 
-## The 30-Second Mental Model
+## Who is it for?
+
+### Developers who write clean code by hand
+If you already practice TDD, follow Clean Architecture, and care about maintainability, you've probably watched an AI agent tear through your codebase with sloppy shortcuts. ASD turns the agent into a disciplined junior engineer: it writes tests first, respects layer boundaries, validates schemas, and keeps cyclomatic complexity down (CRAP score $\le 6$).
+
+### Developers getting started with AI
+You don't need 50-line prompts or prompt-engineering tricks to get reliable code. Run `/code-pipeline-lite`, review the concise plan the agent generates, approve it, and let it implement the feature against automated checks. If the agent makes a mistake, the quality gates reject the code before it reaches git.
+
+### Engineering teams and tech leads
+Developers on the same team often use different tools: one prefers Cursor, another runs Claude Code in the terminal, while someone else uses Windsurf or Copilot. ASD centralizes your coding standards, branch rules, and agent definitions in `.agents/`, syncing native configuration files across every editor so code quality stays consistent across pull requests.
+
+---
+
+## The workflow in 30 seconds
 
 ```
-       Your Feature Idea
-              │
-              ▼
-    [ Choose Pipeline ]
-      │             │
-      │ (Complex)   │ (Standard / Isolated)
-      ▼             ▼
-/code-pipeline  /code-pipeline-lite
-      │             │
-      ▼             ▼
- [ Plan & Acceptance Criteria ] ──► (Pauses for human approval)
-      │
-      ▼
- [ TDD Implementation ] ──────────► (Writes failing test, then minimal code)
-      │
-      ▼
- [ Automated Quality Gates ]
-      ├─► UI Craft Gate (WCAG AA, no AI-slop patterns)
-      ├─► Backend Integrity Gate (Schemas, transactions, timeouts)
-      └─► PII & Security Gate (Secret audit, zero customer data in git)
-      │
-      ▼
- [ Safe Git Branch & Conventional Commit ]
+       Feature request or idea
+                  │
+                  ▼
+         [ Choose pipeline ]
+          │               │
+          │ (Complex)     │ (Standard / Isolated)
+          ▼               ▼
+   /code-pipeline   /code-pipeline-lite
+          │               │
+          ▼               ▼
+     [ Plan & acceptance criteria ] ──► Pauses for your sign-off
+          │
+          ▼
+     [ TDD implementation ] ──────────► Failing test first, then minimal code
+          │
+          ▼
+     [ Automated quality gates ]
+          ├─► UI craft gate (WCAG AA, no AI-slop patterns)
+          ├─► Backend integrity gate (Schemas, transactions, timeouts)
+          └─► PII & security gate (Secrets audit, zero customer data in git)
+          │
+          ▼
+     [ Dedicated git branch & conventional commit ]
 ```
 
 ---
 
-## Step-by-Step Quickstart (0 to Working Feature in 3 Minutes)
+## Quickstart: from zero to first feature
 
-### Step 1: Install ASD Globally
+### 1. Install ASD globally
 
 Install ASD into your global environment (`~/.agents/`):
 
 ```bash
-# Install all domains globally
+# Install all domains
 curl -fsSL https://raw.githubusercontent.com/ibernabel/asd-framework/main/install.sh | bash
 ```
 
-*Want specific domains only?*
+To install specific domains only:
+
 ```bash
 # Software engineering only
 curl -fsSL https://raw.githubusercontent.com/ibernabel/asd-framework/main/install.sh | bash -s -- --domain software
@@ -114,85 +98,85 @@ curl -fsSL https://raw.githubusercontent.com/ibernabel/asd-framework/main/instal
 curl -fsSL https://raw.githubusercontent.com/ibernabel/asd-framework/main/install.sh | bash -s -- --domain software --domain admin
 ```
 
-### Step 2: Initialize or Retrofit Any Project
+### 2. Initialize or retrofit your project
 
-Navigate to your project root, open your AI coding environment (Claude Code, Cursor, Windsurf, or Antigravity), and trigger:
+Open your AI coding environment (Claude Code, Cursor, Windsurf, or Antigravity) in your project directory and run:
 
 ```bash
 /project-init
 ```
 
 ASD inspects your workspace and runs in one of three modes:
-- **Init Mode** (empty directory): Scaffolds git, `.gitignore`, canonical `docs/` hierarchy, `AGENTS.md`, `CONVENTIONS.md`, and pipeline agents.
-- **Retrofit Mode** (existing project): Injects ASD governance infrastructure **without modifying your existing code or git history**.
-- **Update Mode** (existing ASD project): Upgrades agents, skills, and bridge files while preserving your custom project conventions.
+- **Init mode** (empty directory): Sets up git, `.gitignore`, the canonical `docs/` tree, `AGENTS.md`, `CONVENTIONS.md`, and pipeline agents.
+- **Retrofit mode** (existing repository): Adds ASD governance files without altering existing source code or git history.
+- **Update mode** (existing ASD project): Updates agents, skills, and bridge files while preserving your project conventions.
 
-### Step 3: Build Your First Feature (Walkthrough)
+### 3. Build a feature step-by-step
 
-Here is what a typical workflow looks like in your AI chat:
+Here is how a typical session unfolds:
 
-1. **You trigger a task:**
+1. **Trigger a task:**
    ```text
    /code-pipeline-lite Add avatar upload endpoint with 2MB image validation
    ```
 
-2. **The Planner agent analyzes the task and requests sign-off:**
+2. **The Planner extracts criteria and pauses for your approval:**
    ```text
-   [Planner] Proposed Acceptance Criteria:
+   [Planner] Proposed acceptance criteria:
    1. POST /api/user/avatar accepts JPEG and PNG files only.
    2. Files exceeding 2MB return 413 Payload Too Large.
-   3. File contents validated via magic bytes (not just file extension).
-   4. Stored file keys linked to authenticated user ID.
+   3. File contents validated via magic bytes (not just extension).
+   4. Uploaded key links to the authenticated user ID.
 
    Do you approve these criteria before implementation begins?
    ```
 
-3. **You approve:**
+3. **You review and approve:**
    ```text
    Approved, proceed.
    ```
 
-4. **The Implementer agent executes TDD:**
-   - Automatically checks out branch `feature/software-avatar-upload`.
-   - Writes unit and integration tests covering valid uploads, oversized files, and invalid MIME types.
+4. **The Implementer writes tests and code:**
+   - Checks out a dedicated branch (`feature/software-avatar-upload`).
+   - Writes unit and integration tests covering valid uploads, oversized files, and invalid formats.
    - Writes the minimal endpoint logic to turn all tests green.
 
-5. **The Reviewer agent certifies quality gates:**
-   - Verifies input schema validation.
-   - Verifies no hardcoded credentials or customer data.
+5. **The Reviewer certifies quality gates:**
+   - Confirms schema validation is in place.
+   - Verifies no hardcoded secrets or customer data.
    - Runs `verify_backend_integrity.py`.
-   - Generates a conventional commit: `feat(api): add avatar upload endpoint with file size validation`.
+   - Creates a conventional commit: `feat(api): add avatar upload endpoint with file size validation`.
 
-### Step 4: Verify with Automated Quality Gates
+### 4. Run quality gates manually
 
-You can run quality gates manually at any time:
+You can run quality gates anytime from your terminal:
 
 ```bash
 # Audit backend architecture, schemas, and transactions
 python3 scripts/verify_backend_integrity.py src/
 
-# Audit UI code for accessibility and AI design flaws
+# Audit UI code for accessibility defects and design flaws
 impeccable detect src/components/
 ```
 
-### Step 5: Safe Git & Release Sync
+### 5. Sync session docs and releases
 
-When your feature is complete and merged, update project documentation and release version with a single command:
+When your work is done and merged, sync documentation and release metadata:
 
 ```bash
-# Updates session docs in docs/ and syncs GitHub (SemVer, CHANGELOG, tags)
+# Save session deliverables to docs/ and sync GitHub (SemVer, CHANGELOG, tags)
 /docs-and-sync
 ```
 
 ---
 
-## Execution Scopes
+## Execution scopes
 
-ASD dynamically adapts its process depending on what you are building:
+ASD adapts its level of process depending on what you're working on:
 
-| Domain | Mode | Execution Style | Quality Gates |
+| Domain | Mode | Execution style | Quality gates |
 |---|---|---|---|
-| **Software** | Planning Mode (Strict) | Full Uncle Bob Pipeline or Code Pipeline Lite; Gherkin TDD | UI craft check, backend integrity check, security audit, PII scan |
+| **Software** | Planning Mode (Strict) | Uncle Bob Pipeline or Code Pipeline Lite; Gherkin TDD | UI craft check, backend integrity check, security audit, PII scan |
 | **AI Agents** | Planning Mode (Strict) | Prompt versioning, evaluation datasets, guardrails | Behavioral regression suite |
 | **Business Admin** | Admin Mode | Scoped checklists, delivery summaries | Financial double-check, zero customer data in git |
 | **Content & Brand** | Fast Mode | Direct execution, platform formatting | Brand voice guidelines, humanizer review |
@@ -200,12 +184,12 @@ ASD dynamically adapts its process depending on what you are building:
 
 ---
 
-## Choosing Your Software Pipeline
+## Choosing your software pipeline
 
-ASD offers two complementary software development pipelines:
+ASD provides two pipelines depending on task scope:
 
 ### 1. Code Pipeline Lite (`/code-pipeline-lite`)
-**Best for**: Daily features, isolated endpoints, bug fixes, UI components, and utility functions ($\approx 80\%$ of daily tasks).
+Use for day-to-day work: isolated endpoints, bug fixes, UI components, and utility functions (most daily tasks).
 
 ```
 /code-pipeline-lite
@@ -219,35 +203,35 @@ ASD offers two complementary software development pipelines:
 ```
 
 ### 2. Full Uncle Bob Pipeline (`/code-pipeline`)
-**Best for**: Core domain logic, complex microservices, multi-table database migrations, and mission-critical architectural additions.
+Use for core business logic, complex database migrations, multi-service features, and structural architecture changes.
 
 ```
 /code-pipeline
       │
       ├─► 1. Specifier      → Writes Gherkin .feature specifications & QA test procedures
       ├─► 2. Coder          → TDD: writes failing tests first, then implementation
-      ├─► 3. Refactorer     → Eliminates duplication, caps CRAP complexity $\le 6$
+      ├─► 3. Refactorer     → Removes duplication, keeps CRAP complexity $\le 6$
       ├─► 4. Architect      → Mutation testing, coverage review, boundary checks
-      └─► 5. QA             → Executes QA test plan, validates UI/Backend quality gates
+      └─► 5. QA             → Executes QA test plan, validates UI and backend gates
                 │
                 └─► 6. [If pii: financial]
-                    PII Verifier → Deep scan for data leakage
+                    PII Verifier → Deep scan for data leaks
 ```
 
-### Change Classification Guide
+### Change classification
 
-| Change Type | Typical Use Case | Recommended Workflow |
+| Change type | When to use | Recommended flow |
 |---|---|---|
-| **Complex Feature** | Core domain logic, new architectural boundaries | `/code-pipeline` |
-| **Standard Feature** | Isolated endpoints, UI components, background jobs | `/code-pipeline-lite` |
-| **Bug Fix** | Defect repairs, regression fixes | Branch + targeted test + fix + QA check |
-| **Refactoring / Chore** | Dependency updates, documentation, style polish | Branch + direct fix + automated check |
+| **Complex feature** | Core domain logic, new architectural boundaries | `/code-pipeline` |
+| **Standard feature** | Isolated endpoints, UI components, background jobs | `/code-pipeline-lite` |
+| **Bug fix** | Defect repairs, regression fixes | Branch + targeted test + fix + QA check |
+| **Chore / Docs** | Dependency updates, documentation, style polish | Branch + direct fix + automated check |
 
 ---
 
-## The 10 Pipeline Agents
+## The 10 pipeline agents
 
-Located in `.agents/agents/` and activated dynamically by pipeline commands:
+Defined in `.agents/agents/` and activated by pipeline commands:
 
 | Agent | Scope | Responsibility |
 |---|---|---|
@@ -264,35 +248,35 @@ Located in `.agents/agents/` and activated dynamically by pipeline commands:
 
 ---
 
-## Automated Quality Gates
+## Automated quality gates
 
-ASD replaces manual code reviews with deterministic, scriptable checks:
+ASD relies on deterministic, scriptable checks rather than subjective reviews:
 
-### 1. UI Craft Gate (`impeccable`)
-- **Design rules**: Agents follow `/frontend-design` and the Craft Floor guidelines. Eliminates generic AI interface habits: gradient text, unnecessary card grids, decorative badges, and raw hex codes in markup.
+### 1. UI craft gate (`impeccable`)
+- **Rules**: Agents follow `/frontend-design` and the Craft Floor guidelines. Bans common AI interface habits: gradient text, decorative badges, arbitrary card grids, and raw hex codes in markup.
 - **Verification**: `impeccable detect <files>`.
-- **Standards**: WCAG AA contrast ratio ($\ge 4.5:1$ body / $\ge 3:1$ large), minimum $44\times 44\text{px}$ touch targets, responsive layouts tested at 390px and desktop sizes, visible focus rings, and proper empty, loading, and error states.
+- **Standards**: WCAG AA contrast ($\ge 4.5:1$ body / $\ge 3:1$ large), minimum $44\times 44\text{px}$ touch targets, responsive layouts tested at 390px and desktop sizes, visible focus rings, and proper empty, loading, and error states.
 - **Enforcement**: Any primary defect halts pipeline approval until resolved.
 
-### 2. Backend Integrity Gate (`backend-integrity`)
-- **Design rules**: Agents follow `/backend-integrity` and the Backend Floor specification.
+### 2. Backend integrity gate (`backend-integrity`)
+- **Rules**: Agents follow `/backend-integrity` and the Backend Floor specification.
 - **Core checks**:
-  1. **Schema Validation**: Request bodies and parameters must match typed schemas before reaching domain logic (Zod, Pydantic, DTOs).
-  2. **Atomic Transactions**: Operations mutating two or more database tables must run inside a transaction (`db.transaction()`).
-  3. **Explicit Timeouts**: All external network calls must specify bounded timeouts ($\le 10\text{s}$).
-  4. **Bounded Queries**: Unbounded collection queries are prohibited; pagination is mandatory.
-  5. **Layer Isolation**: Controllers handle HTTP transport only; business logic stays in domain services.
-  6. **Structured Errors**: Silent exception suppression (`except: pass`) is prohibited; errors map to explicit HTTP status codes.
+  1. Input validation: Request bodies and parameters must match typed schemas before reaching domain logic (Zod, Pydantic, DTOs).
+  2. Atomic transactions: Operations mutating two or more tables must run inside a transaction (`db.transaction()`).
+  3. Explicit timeouts: All external network calls must specify bounded timeouts ($\le 10\text{s}$).
+  4. Bounded queries: Collection queries must be paginated.
+  5. Layer isolation: Controllers handle HTTP transport only; business logic stays in domain services.
+  6. Structured errors: No silent exception suppression (`except: pass`); errors map to explicit HTTP status codes.
 - **Verification**: `python3 scripts/verify_backend_integrity.py <files>`.
 - **Enforcement**: Exit code 2 blocks QA or Reviewer sign-off.
 
-### 3. Privacy & PII Gate (`pii-verifier`)
-- Activated automatically when `pii: financial` is declared in `CONVENTIONS.md`.
-- Inspects database schemas and fixtures prior to execution, stripping customer identity and financial data from agent exploration queries.
+### 3. Privacy & PII gate (`pii-verifier`)
+- Runs automatically when `pii: financial` is declared in `CONVENTIONS.md`.
+- Inspects database schemas and fixtures prior to execution, stripping customer identity and financial columns from agent exploration queries.
 
 ---
 
-## Core Commands and Meta-Skills
+## Core commands and meta-skills
 
 Centralized in `~/.agents/skills/` and available across all your repositories:
 
@@ -302,7 +286,7 @@ Centralized in `~/.agents/skills/` and available across all your repositories:
 | `/code-pipeline` | Project | Run full Uncle Bob pipeline (Specifier → Coder → Refactorer → Architect → QA). |
 | `/code-pipeline-lite` | Project | Run lightweight 3-stage pipeline (Planner → Implementer → Reviewer). |
 | `/backend-integrity` | Project / Global | Audit backend code against architecture, schema, and transaction rules. |
-| `/humanizer` | Project / Global | Strip AI-generated writing patterns and restore natural human voice. |
+| `/humanizer` | Project / Global | Strip AI-generated writing patterns and restore natural voice. |
 | `/repo-sync` | Project | Bump SemVer, update CHANGELOG, commit, tag, and push safely. |
 | `/post-session-doc` | Project | Save session notes and deliverables into canonical `docs/` hierarchy. |
 | `/docs-and-sync` | Project | Run `/post-session-doc` followed by `/repo-sync` sequentially. |
@@ -313,14 +297,14 @@ Centralized in `~/.agents/skills/` and available across all your repositories:
 
 ---
 
-## Project Structure (Canonical SSOT)
+## Project structure
 
-Running `/project-init` on a software repository establishes this canonical layout:
+Running `/project-init` on a software repository establishes this layout:
 
 ```
 my-project/
 ├── .agents/                        ← Canonical ASD Single Source of Truth (SSOT)
-│   ├── AGENTS.md                   ← Agent rules & Auto-invoke Skills table
+│   ├── AGENTS.md                   ← Agent rules & auto-invoke skills table
 │   ├── CONVENTIONS.md              ← Project stack, git rules, pipeline settings, PII flag
 │   ├── agents/                     ← 10 pipeline agent definitions
 │   │   ├── orchestrator/
@@ -352,7 +336,7 @@ my-project/
 ├── .windsurfrules                  ← Codeium Windsurf Cascade rules
 ├── .github/
 │   └── copilot-instructions.md     ← GitHub Copilot Workspace & Chat rules
-├── docs/                           ← Canonical Documentation Repository
+├── docs/                           ← Canonical documentation repository
 │   ├── README.md                   ← Documentation index
 │   ├── planning/                   ← PRD, user stories, ubiquitous language
 │   ├── implementation/             ← Phase records and feature specifications
@@ -366,23 +350,23 @@ my-project/
 
 ---
 
-## Universal AI Harness Compatibility
+## Universal AI harness compatibility
 
-ASD is harness-agnostic. While canonical rules and agents live in `.agents/`, the framework automatically generates and synchronizes native bridge configurations across all major AI coding platforms:
+ASD is harness-agnostic. While canonical rules and agents live in `.agents/`, the framework synchronizes native bridge configurations across major AI coding platforms:
 
 | AI Harness / Environment | Status | Integration Mechanism | Key Capabilities |
 |---|:---:|---|---|
 | **Google Antigravity** | Supported (Primary) | Native `.agents/` structure & subagents | Full Uncle Bob pipeline, skills, and slash commands |
-| **Claude Code** (`claude` CLI) | Supported | `CLAUDE.md` + `.claude/commands/` | Project memory & native custom slash commands (`/code-pipeline`, `/repo-sync`, etc.) |
+| **Claude Code** (`claude` CLI) | Supported | `CLAUDE.md` + `.claude/commands/` | Project memory & native custom slash commands (`/code-pipeline`, etc.) |
 | **OpenAI Codex & Open Standard** | Supported | Root manifest `AGENTS.md` | Conforms to open AGENTS.md standard (ChatGPT, Codex, Aider) |
 | **Cursor** | Supported | `.cursorrules` & `.cursor/rules/asd-framework.mdc` | Dual-mode: legacy rules and modern Cursor Rules 2.0 (`alwaysApply: true`) |
 | **Windsurf** (Codeium) | Supported | `.windsurfrules` | Cascade workflow rules, branch policy, and planning gates |
 | **GitHub Copilot** | Supported | `.github/copilot-instructions.md` | Copilot Chat and Workspace quality gate enforcement |
-| **WSL Ubuntu 22.04** | Native | Commands run in WSL through PowerShell wrappers | Full cross-platform shell compatibility |
+| **WSL Ubuntu 22.04** | Native | Commands run in WSL through PowerShell wrappers | Cross-platform shell compatibility |
 
-### Validate Harness Readiness
+### Validate harness setup
 
-Audit your project's compatibility across all AI tools at any time:
+Audit your project's compatibility across all tools:
 
 ```bash
 # Validate compatibility across all supported harnesses
@@ -394,9 +378,9 @@ python3 scripts/harness_adapter.py --project-dir .
 
 ---
 
-## Skill Ecosystem and Registries
+## Skill ecosystem and registries
 
-ASD supports discovery, installation, and management through registries documented in [SKILL_REGISTRIES.md](SKILL_REGISTRIES.md):
+ASD supports discovering, installing, and managing skills from registries documented in [SKILL_REGISTRIES.md](SKILL_REGISTRIES.md):
 
 - **[Skills Marketplace (SkillsMP)](https://skillsmp.com)**: Searchable catalog of agent skills accessible via REST API (`SKILLSMP_API_KEY`).
 - **[Paul Bakaus Impeccable](https://github.com/pbakaus/impeccable)**: Design craft floor, WCAG accessibility standards, and automated UI defect scanner (`impeccable detect`).
@@ -410,25 +394,25 @@ ASD supports discovery, installation, and management through registries document
 # Search for skills across connected registries
 python3 scripts/skill_registry.py search "fastapi"
 
-# Install a skill into the ecosystem
+# Install a skill into your ecosystem
 python3 scripts/skill_registry.py install "fastapi"
 ```
 
 ---
 
-## Frequently Asked Questions (FAQ)
+## Frequently asked questions
 
-### Does ASD slow down my AI coding workflow?
-**No, it significantly speeds up delivery.** Without ASD, AI agents write fast code that takes hours to debug, refactor, and test manually. By catching edge cases, enforcing TDD, and executing automated quality gates upfront, ASD eliminates the 80% time sink spent repairing subtle AI regressions.
+### Does ASD slow down development?
+Writing tests and reviewing a plan takes a few minutes upfront, but it eliminates the hours spent untangling broken controllers, missed edge cases, and subtle regressions that unconstrained agents leave behind.
 
-### Can I adopt ASD on an existing codebase without breaking it?
-**Yes.** Running `/project-init` on an existing repository operates in **Retrofit Mode**. It introduces the `.agents/` governance directory and bridge files without altering a single line of your existing application code or git history.
+### Can I use ASD on an existing codebase?
+Yes. Running `/project-init` in an existing repository activates **Retrofit mode**. It injects the `.agents/` folder and bridge files without modifying your application code or touching git history.
 
-### Do all teammates need to use the same AI coding assistant?
-**No.** That is the core advantage of ASD's Universal Multi-Harness architecture. One developer can use Claude Code in the terminal, another can use Cursor, a third can use Windsurf, and another can use Antigravity. Because they all share the `.agents/` single source of truth, every developer's AI assistant follows the exact same conventions and quality gates.
+### Do team members need to use the same editor?
+No. One developer can use Claude Code in the terminal, another Cursor, and another Windsurf or Antigravity. Everyone shares the same `.agents/` source of truth, so every assistant enforces the exact same rules and quality gates.
 
-### What languages and frameworks does ASD support?
-ASD is stack-agnostic. It works out-of-the-box with TypeScript/JavaScript, Python, Go, Rust, PHP/Laravel, Java, C#, and Ruby. The quality gates adapt to your project's native test runner (Vitest, Jest, PyTest, PHPUnit, Cargo test) and schema validation libraries.
+### What languages and frameworks work with ASD?
+ASD is stack-agnostic. It works with TypeScript/JavaScript, Python, Go, Rust, PHP/Laravel, Java, C#, and Ruby. The quality gates hook into whatever test runner (Vitest, Jest, PyTest, PHPUnit, Cargo test) and schema validation libraries your project already uses.
 
 ---
 

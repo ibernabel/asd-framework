@@ -10,6 +10,18 @@ ASD replaces arbitrary agent behavior with domain-specific execution modes and a
 
 ---
 
+## What is ASD?
+
+ASD is not a runtime software library (like React, Laravel, or Django). Your application code never imports ASD, and it adds zero overhead to your production bundle.
+
+Instead, ASD is a **methodological and governance framework** for agentic engineering—the AI-era equivalent of what Extreme Programming (XP) and Agile were for human software teams:
+
+- **Inversion of Control (IoC) for LLMs**: In an unconstrained chat, the AI decides arbitrarily how to proceed. Under ASD, the framework retains control over the lifecycle. It dictates which agent persona executes (`Specifier` → `Coder` → `Refactorer` → `Architect` → `QA`), which quality gates must pass, and what artifacts must be produced before moving forward. The agent executes within boundaries; the framework owns the workflow.
+- **Agentic Governance & Quality Layer**: Acts as an automated gatekeeper preventing common AI anti-patterns: unvalidated inputs, bypassed unit tests, bloated controllers, direct pushes to `main`, and customer data or credential leaks.
+- **Universal Harness Abstraction**: Rather than locking your project into a single AI tool, ASD maintains a single source of truth in `.agents/` and automatically synchronizes native harness bridges for Antigravity, Claude Code, Cursor, Windsurf, and GitHub Copilot.
+
+---
+
 ## Execution scopes
 
 | Domain | Mode | Execution style | Quality gates |

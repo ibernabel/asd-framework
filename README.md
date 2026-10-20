@@ -25,6 +25,7 @@ ASD replaces arbitrary agent behavior with domain-specific execution modes and a
 ## What ASD does
 
 - **Dual development pipelines**: For complex features, `/code-pipeline` runs an orchestrated pipeline with dedicated roles (Specifier, Coder, Refactorer, Architect, QA, and PII Verifier). For smaller, self-contained tasks, `/code-pipeline-lite` provides a faster 3-stage flow (Planner, Implementer, Reviewer).
+- **Universal multi-harness compatibility**: ASD is completely harness-agnostic. While `.agents/` remains the canonical single source of truth, the framework generates and synchronizes native bridge files for Claude Code (`CLAUDE.md` and `.claude/commands/`), OpenAI Codex & the open AGENTS.md standard (`AGENTS.md` at root), Cursor (`.cursorrules` and modern `.cursor/rules/*.mdc`), Windsurf (`.windsurfrules`), and GitHub Copilot (`.github/copilot-instructions.md`).
 - **Automated UI craft gate (`impeccable`)**: Before writing interface code, agents review the Craft Floor guidelines (design tokens, typography hierarchy, responsive breakpoints, avoiding AI-slop patterns like gradient text and repetitive icon cards). After coding, `impeccable detect` scans the UI. Any primary defect blocks QA approval.
 - **Automated backend integrity gate (`backend-integrity`)**: Enforces clean architecture boundaries, schema-first input validation (Zod, Pydantic, DTOs), explicit database transactions on multi-table writes, bounded network timeouts ($\le 10\text{s}$), and no unpaginated collection queries. Verified through `verify_backend_integrity.py`.
 - **Privacy-first financial protocol**: Projects marked with `pii: financial` in `CONVENTIONS.md` automatically run the `pii-verifier` agent as the final check across all execution modes. Agents inspect database and spreadsheet structures first, omitting personal data columns from data analysis.
@@ -62,9 +63,10 @@ curl -fsSL https://raw.githubusercontent.com/ibernabel/asd-framework/main/instal
 
 The installer:
 1. Creates the `~/.agents/` directory structure.
-2. Copies selected domain templates to `~/.agents/templates/`.
+2. Copies selected domain templates and Universal AI Harness templates (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `cursor-rule.mdc`, `.windsurfrules`, `copilot-instructions.md`, and Claude Code slash commands) to `~/.agents/templates/`.
 3. Installs core meta-skills (`project-init`, `code-pipeline`, `code-pipeline-lite`, `repo-sync`, `post-session-doc`, `docs-and-sync`, `backend-integrity`) to `~/.agents/skills/`.
 4. Deploys the 10 pipeline agents to `~/.agents/agents/` for the software domain.
+5. Deploys automation and sync scripts (`harness_adapter.py`, `install_project_skills.py`, `sync_agents_ecosystem.py`, `bump_version.py`) to `~/.agents/scripts/`.
 
 ### 2. Initialize or retrofit a project
 
@@ -213,10 +215,10 @@ Running `/project-init` on a software project sets up this structure:
 
 ```
 my-project/
-├── .agents/
-│   ├── AGENTS.md               ← Project agent rules and Auto-invoke Skills table
-│   ├── CONVENTIONS.md          ← Project stack, git rules, pipeline settings, PII flag
-│   ├── agents/                 ← 10 pipeline agent definitions
+├── .agents/                        ← Canonical ASD SSOT
+│   ├── AGENTS.md                   ← Detailed agent rules & Auto-invoke Skills table
+│   ├── CONVENTIONS.md              ← Project stack, git rules, pipeline settings, PII flag
+│   ├── agents/                     ← 10 pipeline agent definitions
 │   │   ├── orchestrator/
 │   │   ├── specifier/
 │   │   ├── coder/
@@ -227,7 +229,7 @@ my-project/
 │   │   ├── implementer/
 │   │   ├── reviewer/
 │   │   └── pii-verifier/
-│   └── skills/                 ← Physical copies of project skills
+│   └── skills/                     ← Physical copies of project skills
 │       ├── code-pipeline/
 │       ├── code-pipeline-lite/
 │       ├── backend-integrity/
@@ -235,20 +237,43 @@ my-project/
 │       ├── repo-sync/
 │       ├── post-session-doc/
 │       └── docs-and-sync/
-├── docs/                       ← Canonical documentation (SSOT)
-│   ├── README.md               ← Documentation index
-│   ├── planning/               ← PRD, user stories, domain ubiquitous language
-│   ├── implementation/         ← Phase records and feature technical specs
-│   ├── testing/                ← QA test plans, test reports, Gherkin specs
-│   ├── decisions/              ← Architecture Decision Records (ADRs)
-│   ├── fixes/                  ← Bug fix records
-│   └── knowledges/             ← Learned project patterns and known issues
+├── AGENTS.md                       ← Root manifest (Open Standard / Codex / ChatGPT)
+├── CLAUDE.md                       ← Anthropic Claude Code entry point
+├── .claude/
+│   └── commands/                   ← Native Claude Code custom slash commands
+│       ├── code-pipeline.md
+│       ├── code-pipeline-lite.md
+│       ├── project-init.md
+│       ├── repo-sync.md
+│       ├── docs-and-sync.md
+│       ├── post-session-doc.md
+│       ├── backend-integrity.md
+│       └── humanizer.md
+├── .cursorrules                    ← Universal Cursor configuration
+├── .cursor/
+│   └── rules/
+│       └── asd-framework.mdc       ← Modern Cursor Rules 2.0 (alwaysApply: true)
+├── .windsurfrules                  ← Codeium Windsurf Cascade rules
+├── .github/
+│   └── copilot-instructions.md     ← GitHub Copilot Workspace & Chat rules
+├── docs/                           ← Canonical documentation (SSOT)
+│   ├── README.md                   ← Documentation index
+│   ├── planning/                   ← PRD, user stories, domain ubiquitous language
+│   ├── implementation/             ← Phase records and feature technical specs
+│   ├── testing/                    ← QA test plans, test reports, Gherkin specs
+│   ├── decisions/                  ← Architecture Decision Records (ADRs)
+│   ├── fixes/                      ← Bug fix records
+│   └── knowledges/                 ← Learned project patterns and known issues
 ├── tests/
-│   └── features/               ← Gherkin .feature files
+│   ├── test_harness_adapter.py     ← Harness adapter test suite
+│   └── features/                   ← Gherkin .feature files
 ├── scripts/
-│   └── bump_version.py         ← SemVer versioning script
-├── VERSION                     ← Current version (e.g. 0.5.0)
-├── ROADMAP.md                  ← Milestones and bounded contexts
+│   ├── harness_adapter.py          ← Universal AI harness adapter & validator
+│   ├── install_project_skills.py   ← Skill installer & harness synchronizer
+│   ├── sync_agents_ecosystem.py    ← Global ecosystem synchronizer
+│   └── bump_version.py             ← SemVer versioning script
+├── VERSION                         ← Current version (e.g. 0.6.0)
+├── ROADMAP.md                      ← Milestones and bounded contexts
 └── README.md
 ```
 

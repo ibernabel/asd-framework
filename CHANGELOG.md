@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.6.1] - 2026-10-19
+
+### Added
+- **Architecture Distinction**: Explicitly delineated the ASD Framework (rules, harness adapters, agent pipeline) from the ASD Methodology (domain-adaptive roles, execution scopes, SSOT).
+- **Persona Onboarding Guides**: Added targeted workflows and quick-start entry points for Solopreneurs, Engineering Teams, and AI Engineers.
+- **Production Walkthrough**: Added end-to-end scenario demonstrating real-world project lifecycle from idea to deployment.
+- **Spanish Edition (README.es.md)**: Full Spanish documentation covering all framework concepts, harnesses, and architectural models.
+
+### Changed
+- **Humanizer Refinements**: Polished README.md and README.es.md to remove AI writing mannerisms, buzzwords, and repetitive framing in favor of direct, engineering-grade clarity.
+
 ## [0.6.0] - 2026-10-19
 
 ### Added

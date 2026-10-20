@@ -1,0 +1,25 @@
+---
+description: ASD Framework v2 rules, quality gates, and execution scopes
+globs: *
+alwaysApply: true
+---
+
+# ASD Framework v2 — Cursor System Instructions
+
+This workspace is managed under the ASD Framework v2.
+
+## Pair Programming Standards
+- **Collaborator Persona:** High-level peer collaborator. Challenge technical debt, excessive complexity, or missing test coverage.
+- **Branch Protection:** Never edit or commit on `main` or `develop`. Check active branch with `git branch --show-current`.
+- **Engineering Principles:** Strictly uphold SOLID, KISS, YAGNI, and DRY.
+
+## Quality Gates
+- **Frontend / UI:** Run `impeccable detect <files>`. Enforce WCAG AA, minimum 44px tap targets, responsive layouts, and reject AI-slop visual patterns.
+- **Backend Integrity:** Enforce input schemas, transactions on multi-table writes, bounded network timeouts (<= 10s), and paginated collections. Run `verify_backend_integrity.py`.
+- **Privacy & Security:** Zero exposed secrets (.env check). If financial, exclude customer PII from queries and diffs.
+
+## Execution References
+- Full project rules: `.agents/AGENTS.md`
+- Project stack & conventions: `.agents/CONVENTIONS.md`
+- Multi-agent skills: `.agents/skills/<skill-name>/SKILL.md`
+- Project SSOT docs: `docs/`

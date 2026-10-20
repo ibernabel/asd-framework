@@ -105,6 +105,36 @@ if [[ " ${SELECTED_DOMAINS[*]} " =~ " software " ]]; then
     || warn "Failed to download CONVENTIONS-software.md"
 fi
 
+# ─── Install multi-harness compatibility templates ───────────────────────────
+info "Installing Universal AI Harness templates (Claude Code, Codex, Cursor, Windsurf, Copilot)..."
+mkdir -p "${AGENTS_DIR}/templates/harnesses/claude-commands"
+mkdir -p "${AGENTS_DIR}/scripts"
+
+HARNESS_TEMPLATES=("AGENTS.md" "CLAUDE.md" ".cursorrules" "cursor-rule.mdc" ".windsurfrules" "copilot-instructions.md")
+for ht in "${HARNESS_TEMPLATES[@]}"; do
+  curl -fsSL "${REPO_RAW}/templates/harnesses/${ht}" \
+    -o "${AGENTS_DIR}/templates/harnesses/${ht}" \
+    && log "Harness template installed: ${ht}" \
+    || warn "Failed to download harness template: ${ht}"
+done
+
+CLAUDE_COMMANDS=("code-pipeline.md" "code-pipeline-lite.md" "project-init.md" "repo-sync.md" "post-session-doc.md" "docs-and-sync.md" "backend-integrity.md" "humanizer.md")
+for cc in "${CLAUDE_COMMANDS[@]}"; do
+  curl -fsSL "${REPO_RAW}/templates/harnesses/claude-commands/${cc}" \
+    -o "${AGENTS_DIR}/templates/harnesses/claude-commands/${cc}" \
+    && log "Claude command installed: /${cc%.md}" \
+    || warn "Failed to download Claude command: ${cc}"
+done
+
+# ─── Install scripts ────────────────────────────────────────────────────────
+for script in harness_adapter.py install_project_skills.py sync_agents_ecosystem.py bump_version.py; do
+  curl -fsSL "${REPO_RAW}/scripts/${script}" \
+    -o "${AGENTS_DIR}/scripts/${script}" \
+    && chmod +x "${AGENTS_DIR}/scripts/${script}" \
+    && log "Script installed: ${script}" \
+    || warn "Failed to download script: ${script}"
+done
+
 # ─── Install core meta-skills ────────────────────────────────────────────────
 for skill in project-init repo-sync post-session-doc code-pipeline docs-and-sync; do
   mkdir -p "${AGENTS_DIR}/skills/${skill}"

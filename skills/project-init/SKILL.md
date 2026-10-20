@@ -320,6 +320,26 @@ python3 /home/ibernabel/.agents/scripts/install_project_skills.py --project-dir 
 
 ---
 
+### Paso 6D: Configuración Multi-Harness Universal (Claude Code, Codex, Cursor, Windsurf, Copilot)
+
+Garantizar compatibilidad inmediata y nativa con todos los entornos y harnesses de pair programming generando o sincronizando los adaptadores de harness desde `harness_adapter.py`:
+
+```bash
+# Configure or update multi-harness bridges for all AI coding environments
+python3 /home/ibernabel/.agents/scripts/harness_adapter.py --project-dir . --domain <domain>
+```
+
+Para proyectos multi-vertical, ejecutar también en cada vertical si se abre como workspace independiente.
+
+Esto genera de forma no destructiva:
+- **`AGENTS.md` (raíz):** Manifiesto compatible con el estándar abierto de agentes (OpenAI Codex, ChatGPT, Aider).
+- **`CLAUDE.md` + `.claude/commands/`:** Memoria de proyecto y slash commands nativos (`/code-pipeline`, `/repo-sync`, etc.) para Claude Code CLI.
+- **`.cursorrules` + `.cursor/rules/asd-framework.mdc`:** Reglas universales y Cursor Rules 2.0 (`alwaysApply: true`).
+- **`.windsurfrules`:** Reglas de Cascade para Codeium Windsurf.
+- **`.github/copilot-instructions.md`:** Instrucciones para GitHub Copilot Chat y Workspace.
+
+---
+
 ### Paso 7: Configuración Completa del Dominio Software
 
 **Se ejecuta para:** cualquier proyecto con dominio `software`, ya sea dominio único o una vertical dentro de un proyecto multi-vertical. El directorio base `$SW_DIR` es la raíz del proyecto (dominio único) o el subdirectorio de la vertical (ej: `technology/`).
@@ -478,6 +498,10 @@ cat VERSION 2>/dev/null && echo "✅ VERSION" || echo "❌ VERSION MISSING" && \
 ls scripts/bump_version.py 2>/dev/null && echo "✅ bump_version.py" || echo "❌ bump_version.py MISSING" && \
 ls tests/features/ 2>/dev/null && echo "✅ tests/features/" || echo "❌ tests/features/ MISSING" && \
 ls ROADMAP.md 2>/dev/null && echo "✅ ROADMAP.md" || echo "❌ ROADMAP.md MISSING"
+
+# ── Multi-Harness Compatibility Audit ─────────────────────────────────────
+echo "=== MULTI-HARNESS AUDIT ===" && \
+python3 /home/ibernabel/.agents/scripts/harness_adapter.py --validate --project-dir .
 
 # ── .gitignore integridad ─────────────────────────────────────────────────
 echo "=== GITIGNORE AUDIT ===" && \

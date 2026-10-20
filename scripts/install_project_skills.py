@@ -19,16 +19,28 @@ import re
 import shutil
 import sys
 
+# Import harness adapter for universal multi-harness compatibility
+try:
+    from harness_adapter import install_harness_adapters
+except ImportError:
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from harness_adapter import install_harness_adapters
+    except Exception:
+        install_harness_adapters = None
+
 GLOBAL_AGENTS_DIR = os.path.expanduser("~/.agents")
 GLOBAL_SKILLS_DIR = os.path.join(GLOBAL_AGENTS_DIR, "skills")
 PRESETS_FILE = os.path.join(GLOBAL_AGENTS_DIR, "templates", "skills", "presets.json")
+REPO_PRESETS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates", "skills", "presets.json")
 
 
 def load_presets():
-    """Load skill presets from presets.json."""
-    if not os.path.exists(PRESETS_FILE):
+    """Load skill presets from presets.json (global ~/.agents or repo-local fallback)."""
+    presets_path = PRESETS_FILE if os.path.exists(PRESETS_FILE) else REPO_PRESETS_FILE
+    if not os.path.exists(presets_path):
         return {}
-    with open(PRESETS_FILE, "r", encoding="utf-8") as f:
+    with open(presets_path, "r", encoding="utf-8") as f:
         data = json.load(f)
         return data.get("presets", {})
 
@@ -198,7 +210,7 @@ def migrate_symlinks_in_project(project_dir, dry_run=False, sync_md=True):
     return migrated
 
 
-def install_project_skills(project_dir, domain, stacks=None, extra_skills=None, dry_run=False, sync_md=True, use_symlinks=False):
+def install_project_skills(project_dir, domain, stacks=None, extra_skills=None, dry_run=False, sync_md=True, use_symlinks=False, sync_harnesses=True):
     """Install skills as physical copies into <project>/.agents/skills/."""
     target_skills_dir = os.path.join(project_dir, ".agents", "skills")
     resolved = resolve_skills(domain, stacks, extra_skills)
@@ -259,6 +271,11 @@ def install_project_skills(project_dir, domain, stacks=None, extra_skills=None, 
     if sync_md and not dry_run:
         sync_agents_md(project_dir, installed)
 
+    # Synchronize multi-harness bridges (Claude Code, Codex, Cursor, Windsurf, Copilot)
+    if sync_harnesses and install_harness_adapters:
+        print("[*] Synchronizing AI harness bridges (Claude Code, Codex, Cursor, Windsurf, Copilot)...")
+        install_harness_adapters(project_dir, domain=domain, dry_run=dry_run)
+
     return installed
 
 
@@ -274,6 +291,7 @@ def main():
     parser.add_argument("--skill", action="append", dest="extra_skills", help="Specific extra skill(s) to include")
     parser.add_argument("--dry-run", action="store_true", help="Simulate without writing files")
     parser.add_argument("--no-sync-md", action="store_true", help="Do not update AGENTS.md Auto-invoke table")
+    parser.add_argument("--no-harnesses", action="store_true", help="Do not install or update multi-harness bridges")
     parser.add_argument("--migrate-symlinks", action="store_true", help="Convert all existing skill symlinks in project to physical copies")
     parser.add_argument("--symlink", action="store_true", help="Use symlinks instead of physical copies (not recommended)")
     # Deprecated workflow flags preserved for backwards compatibility
@@ -304,6 +322,7 @@ def main():
         dry_run=args.dry_run,
         sync_md=not args.no_sync_md,
         use_symlinks=args.symlink,
+        sync_harnesses=not args.no_harnesses,
     )
 
 

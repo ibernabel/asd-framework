@@ -143,6 +143,49 @@ def sync_framework_repo(dry_run=False):
     return True
 
 
+def push_framework_to_global(dry_run=False):
+    """Synchronize files from asd-framework-public repo to canonical ~/.agents/."""
+    print(f"\n[*] ─── Propagando Framework Público ({FRAMEWORK_REPO_DIR}) -> Global ({GLOBAL_AGENTS_DIR}) ───")
+    if not os.path.exists(FRAMEWORK_REPO_DIR):
+        print(f"[!] Framework repo not found at {FRAMEWORK_REPO_DIR}")
+        return False
+
+    total_synced = 0
+
+    # 1. Templates
+    src_templates = os.path.join(FRAMEWORK_REPO_DIR, "templates")
+    synced = sync_directory_files(src_templates, GLOBAL_TEMPLATES_DIR, dry_run=dry_run)
+    total_synced += synced
+    print(f"  [+] Plantillas sincronizadas a {GLOBAL_TEMPLATES_DIR}: {synced} archivos")
+
+    # 2. Scripts
+    src_scripts = os.path.join(FRAMEWORK_REPO_DIR, "scripts")
+    synced = sync_directory_files(src_scripts, GLOBAL_SCRIPTS_DIR, dry_run=dry_run)
+    total_synced += synced
+    print(f"  [+] Scripts sincronizados a {GLOBAL_SCRIPTS_DIR}: {synced} archivos")
+
+    # 3. Agents pool
+    src_agents = os.path.join(FRAMEWORK_REPO_DIR, "agents")
+    synced = sync_directory_files(src_agents, GLOBAL_AGENTS_POOL_DIR, dry_run=dry_run)
+    total_synced += synced
+    print(f"  [+] Agentes sincronizados a {GLOBAL_AGENTS_POOL_DIR}: {synced} archivos")
+
+    # 4. Meta-skills
+    framework_skills_dir = os.path.join(FRAMEWORK_REPO_DIR, "skills")
+    if os.path.exists(framework_skills_dir):
+        for skill_name in os.listdir(framework_skills_dir):
+            src_skill = os.path.join(framework_skills_dir, skill_name)
+            dest_skill = os.path.join(GLOBAL_SKILLS_DIR, skill_name)
+            if os.path.isdir(src_skill):
+                synced = sync_directory_files(src_skill, dest_skill, dry_run=dry_run)
+                total_synced += synced
+        print(f"  [+] Meta-skills canónicas sincronizadas a {GLOBAL_SKILLS_DIR}")
+
+    action = "[DRY-RUN] Simulación completa" if dry_run else "Propagación global completada"
+    print(f"[✓] {action} ({total_synced} modificaciones aplicadas en {GLOBAL_AGENTS_DIR}).\n")
+    return True
+
+
 def discover_project_dirs(scan_roots):
     """Find directories containing .agents/ under scan_roots."""
     found = set()
@@ -219,6 +262,7 @@ def main():
     parser = argparse.ArgumentParser(description="ASD Framework v2 Ecosystem Synchronizer")
     parser.add_argument("--dry-run", action="store_true", help="Simulate synchronization without modifying files")
     parser.add_argument("--no-framework-repo", action="store_true", help="Skip synchronizing asd-framework-public repo")
+    parser.add_argument("--push-to-global", action="store_true", help="Propagate changes from asd-framework-public to canonical ~/.agents/")
     parser.add_argument("--project-dir", action="append", help="Specific project directory to synchronize")
     parser.add_argument("--scan-root", action="append", help="Root directory to scan for .agents/ projects")
 
@@ -227,6 +271,10 @@ def main():
     print("════════════════════════════════════════════════════════════════")
     print("  ASD Framework v2 — Global Agent Ecosystem Synchronizer")
     print("════════════════════════════════════════════════════════════════")
+
+    if args.push_to_global:
+        push_framework_to_global(dry_run=args.dry_run)
+        return
 
     # Step 1: Sync Framework Public Repo
     if not args.no_framework_repo:

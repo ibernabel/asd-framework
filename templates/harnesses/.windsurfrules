@@ -1,0 +1,12 @@
+# Windsurf Cascade Rules — ASD Framework v2
+
+Operating under the ASD Framework v2 standards.
+
+- Always verify the active git branch before editing code (`git branch --show-current`). Never commit to `main` or `develop`.
+- Follow Planning Mode for software tasks: clarify acceptance criteria, write tests first, then write minimal code to pass.
+- Uphold SOLID, KISS, YAGNI, and DRY principles.
+- Enforce UI craft floor (WCAG AA, no gradient text/card grids) and backend integrity (typed schemas, transactions, <=10s timeouts).
+- Code, commits, and technical explanations must be in English.
+- Commit using Conventional Commits (`type(scope): description`).
+- Consult `.agents/AGENTS.md` and `.agents/CONVENTIONS.md` for project specifications.
+- Project skills are available in `.agents/skills/`.

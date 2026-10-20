@@ -278,17 +278,31 @@ python3 scripts/skill_registry.py install "fastapi"
 
 ---
 
-## Compatibility
+## Universal AI harness compatibility
 
-ASD works with AI coding environments that support project-level instructions:
+ASD is harness-agnostic. While canonical rules and 10 pipeline agents live in `.agents/`, the framework automatically generates and synchronizes native bridge configurations across all major AI coding platforms:
 
-| Environment | Status | Details |
-|-------------|:------:|---------|
-| **Google Antigravity** | Supported (Primary) | Full support for `.agents/`, subagents, and slash commands |
-| **Claude Code** | Supported | Reads `.agents/AGENTS.md` and physical skills |
-| **Cursor** | Supported | Uses project rules and `.agents/CONVENTIONS.md` |
-| **Windsurf** | Supported | Reads workspace configuration and `.agents/skills/` |
-| **WSL Ubuntu 22.04** | Native | Commands run in WSL through PowerShell wrappers |
+| AI Harness / Environment | Status | Integration Mechanism | Key Capabilities |
+|---|:---:|---|---|
+| **Google Antigravity** | Supported (Primary) | Native `.agents/` structure & subagents | Full Uncle Bob pipeline, skills, and slash commands |
+| **Claude Code** (`claude` CLI) | Supported | `CLAUDE.md` + `.claude/commands/` | Project memory & native custom slash commands (`/code-pipeline`, `/repo-sync`, etc.) |
+| **OpenAI Codex & Open Standard** | Supported | Root manifest `AGENTS.md` | Conforms to the open AGENTS.md standard (ChatGPT, Codex, Aider) |
+| **Cursor** | Supported | `.cursorrules` & `.cursor/rules/asd-framework.mdc` | Dual-mode: legacy rules and modern Cursor Rules 2.0 (`alwaysApply: true`) |
+| **Windsurf** (Codeium) | Supported | `.windsurfrules` | Cascade workflow rules, branch policy, and planning gates |
+| **GitHub Copilot** | Supported | `.github/copilot-instructions.md` | Copilot Chat and Workspace quality gate enforcement |
+| **WSL Ubuntu 22.04** | Native | Commands run in WSL through PowerShell wrappers | Full cross-platform shell compatibility |
+
+### Validate harness readiness
+
+Run the harness auditor in any project directory to verify compatibility across all AI tools:
+
+```bash
+# Validate compatibility across all supported harnesses
+python3 scripts/harness_adapter.py --validate --project-dir .
+
+# Install or sync missing harness bridges without overwriting custom rules
+python3 scripts/harness_adapter.py --project-dir .
+```
 
 ---
 

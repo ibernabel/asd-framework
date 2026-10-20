@@ -1,0 +1,21 @@
+# Cursor Rules — ASD Framework v2
+
+You are pair-programming on a project governed by the ASD Framework v2.
+
+## Core Rules:
+1. **Branch Protection:** NEVER write or commit code directly to `main` or `develop`. All work must occur on a dedicated branch (`feature/[domain]-[desc]` or `fix/[desc]`).
+2. **Architecture:** Enforce SOLID, KISS, YAGNI, and DRY. Reject over-engineered abstractions and speculative patterns.
+3. **Execution Scopes:**
+   - Software & AI: Planning Mode (Strict). Confirm design and acceptance criteria before implementation.
+   - Content & Video: Fast Mode (Direct execution).
+   - Business Admin: Admin Mode (Checklists, zero customer PII in git).
+4. **Quality Gates:**
+   - UI Craft: Adhere to `/frontend-design`. No AI-slop (no gradient text, no repetitive icon+card grids). Minimum 44x44px touch targets, WCAG AA contrast.
+   - Backend Integrity: Request schemas (Zod/Pydantic/DTOs), transactions on multi-table mutations, bounded network timeouts (<= 10s), pagination on collection queries.
+5. **Language & Commits:**
+   - Code, docstrings, commits, and technical explanations in English.
+   - Conventional Commits: `type(scope): description`.
+6. **Detailed Rules & Skills:**
+   - Project instructions: `.agents/AGENTS.md` and `.agents/CONVENTIONS.md`.
+   - Physical skills: `.agents/skills/<skill-name>/SKILL.md`.
+   - SSOT documentation: `docs/`.

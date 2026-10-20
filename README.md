@@ -259,9 +259,11 @@ my-project/
 ASD supports discovery, installation, and management through registries documented in [SKILL_REGISTRIES.md](SKILL_REGISTRIES.md):
 
 - **[Skills Marketplace (SkillsMP)](https://skillsmp.com)**: Searchable catalog of agent skills accessible via REST API (`SKILLSMP_API_KEY`).
+- **[Paul Bakaus Impeccable](https://github.com/pbakaus/impeccable)**: Design craft floor, WCAG accessibility standards, and automated UI defect scanner (`impeccable detect`).
 - **[Antigravity Skills](https://github.com/rmyndharis/antigravity-skills)**: Backend, distributed systems, and DevOps skills.
 - **[Skills.md](https://skills.md)**: Agent tools for repository automation and content workflows.
 - **[Matt Pocock's Skills](https://github.com/mattpocock/skills)**: Skills for `grilling`, `domain-modeling`, `to-spec`, `refactor`, and `prototype`.
+- **[Anthropic Official Skills](https://github.com/anthropics/skills)**: Frontend craft and ergonomic design patterns (`frontend-design`).
 - **[Cathy Kim SemVer](https://github.com/cathy-kim/skill-semver)**: SemVer standards and release automation.
 
 Use `scripts/skill_registry.py` to search and install skills from connected registries:

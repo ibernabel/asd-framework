@@ -77,14 +77,29 @@ Orchestrator
 ```
 
 ### Agent Files Location
-All 7 agents are available in `.agents/agents/`:
-- `orchestrator/agent.md` — coordinates the full pipeline
-- `specifier/agent.md` — Gherkin + QA procedures
-- `coder/agent.md` — TDD implementation
-- `refactorer/agent.md` — complexity reduction
-- `architect/agent.md` — mutation testing + architecture
-- `qa/agent.md` — QA execution
-- `pii-verifier/agent.md` — PII scan (financial projects only)
+All 16 agents are hosted in root `~/.agents/agents/` and available locally in `.agents/agents/`:
+
+#### 1. Full Pipeline (Uncle Bob — 7 Agents)
+- `orchestrator/agent.md` — Coordinates the full pipeline (`/code-pipeline`)
+- `specifier/agent.md` — Gherkin scenarios + QA test procedures
+- `coder/agent.md` — TDD unit/integration tests + implementation
+- `refactorer/agent.md` — Complexity reduction (CRAP ≤ 6) + DRY
+- `architect/agent.md` — Mutation testing + coverage gate + architecture review
+- `qa/agent.md` — QA execution, verification report + security audit
+- `pii-verifier/agent.md` — PII scan (mandatory on financial projects)
+
+#### 2. Lite Pipeline (Pragmatic — 3 Agents)
+- `planner/agent.md` — Acceptance criteria & simple scenarios (`/code-pipeline-lite`)
+- `implementer/agent.md` — Direct TDD implementation to green
+- `reviewer/agent.md` — Pragmatic code quality, cleanup & security check
+
+#### 3. The Council Deliberation Suite (6 Agents)
+- `council-chairman/agent.md` — Moderation, peer-review & strategic verdict (`/ask-the-council`)
+- `council-contrarian/agent.md` — Fatal flaws, hidden risks & failure modes
+- `council-first-principles/agent.md` — Deconstruction of core axioms & root truth
+- `council-expansionist/agent.md` — Asymmetric upside & 10x scale vectors
+- `council-outsider/agent.md` — Unbiased common-sense & curse-of-knowledge check
+- `council-executor/agent.md` — Tactical feasibility & Monday 9:00 AM action plan
 
 ---
 

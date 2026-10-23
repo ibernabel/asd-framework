@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.6.3] - 2026-10-23
+
+### Fixed
+- feat(sync): update sync_agents_ecosystem, ask-the-council paths and sync scripts
+
 ## [0.6.2] - 2026-10-23
 
 ### Fixed

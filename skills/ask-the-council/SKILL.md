@@ -24,21 +24,21 @@ Sigue estrictamente las 3 fases del método canónico:
    - Restricciones, contexto clave y lo que está verdaderamente en juego.
 
 ### Fase 2: Deliberación Paralela e Independiente (Blind Query)
-Invoca o simula de forma aislada a los 5 asesores canónicos ubicados en `~/.agents/the-council/`. **Cada asesor debe evaluar el prompt de forma independiente, sin ver las respuestas de los demás:**
+Invoca mediante subagentes (`invoke_subagent`) o simula de forma aislada a los 5 asesores canónicos ubicados en `~/.agents/agents/council-*/`. **Cada asesor debe evaluar el prompt de forma independiente, sin ver las respuestas de los demás:**
 
-1. 😈 **The Contrarian** (`~/.agents/the-council/contrarian/agent.md`):
+1. 😈 **The Contrarian** (`council-contrarian` / `~/.agents/agents/council-contrarian/agent.md`):
    - Caza el fallo fatal, riesgos ocultos, costos de mantenimiento y razones de fracaso.
-2. 🧬 **The First Principles Thinker** (`~/.agents/the-council/first-principles/agent.md`):
+2. 🧬 **The First Principles Thinker** (`council-first-principles` / `~/.agents/agents/council-first-principles/agent.md`):
    - Desmonta la premisa superficial y analiza cuál es el problema raíz y verdad fundamental.
-3. 🚀 **The Expansionist** (`~/.agents/the-council/expansionist/agent.md`):
+3. 🚀 **The Expansionist** (`council-expansionist` / `~/.agents/agents/council-expansionist/agent.md`):
    - Identifica ventajas ocultas, multiplicadores de valor y oportunidades de escala 10x.
-4. 👁️ **The Outsider** (`~/.agents/the-council/outsider/agent.md`):
+4. 👁️ **The Outsider** (`council-outsider` / `~/.agents/agents/council-outsider/agent.md`):
    - Evalúa sin contexto previo ni sesgo de inmersión para detectar fallos obvios de sentido común.
-5. 🛠️ **The Executor** (`~/.agents/the-council/executor/agent.md`):
+5. 🛠️ **The Executor** (`council-executor` / `~/.agents/agents/council-executor/agent.md`):
    - Aterriza la viabilidad táctica y define el plan de acción inmediato para el lunes a las 9:00 AM.
 
 ### Fase 3: Síntesis & Veredicto del Chairman
-Entrega las 5 deliberaciones completas a **The Chairman** (`~/.agents/the-council/chairman/agent.md`) para:
+Entrega las 5 deliberaciones completas a **The Chairman** (`council-chairman` / `~/.agents/agents/council-chairman/agent.md`) para:
 1. Identificar el consenso unánime de alta confianza.
 2. Analizar el choque central entre los asesores (ej. Contrarian vs Expansionist).
 3. Exponer los puntos ciegos que todos pasaron por alto.

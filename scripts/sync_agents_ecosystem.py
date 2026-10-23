@@ -23,7 +23,7 @@ GLOBAL_SKILLS_DIR = os.path.join(GLOBAL_AGENTS_DIR, "skills")
 GLOBAL_AGENTS_POOL_DIR = os.path.join(GLOBAL_AGENTS_DIR, "agents")
 GLOBAL_TEMPLATES_DIR = os.path.join(GLOBAL_AGENTS_DIR, "templates")
 GLOBAL_SCRIPTS_DIR = os.path.join(GLOBAL_AGENTS_DIR, "scripts")
-FRAMEWORK_REPO_DIR = os.path.join(GLOBAL_AGENTS_DIR, "asd-framework-public")
+FRAMEWORK_REPO_DIR = os.path.expanduser("~/develop/asd-framework")
 
 ALL_10_AGENTS = [
     "orchestrator",

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sync Agents Ecosystem for ASD Framework v2.
+Sync Agents Ecosystem for ASD Framework.
 Propagates updated pipeline agents, skills, templates, and UI/UX validation tooling
 from canonical ~/.agents/ to:
 1. The public framework repository: ~/.agents/asd-framework-public/
@@ -259,7 +259,7 @@ def sync_project_instance(project_dir, dry_run=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="ASD Framework v2 Ecosystem Synchronizer")
+    parser = argparse.ArgumentParser(description="ASD Framework Ecosystem Synchronizer")
     parser.add_argument("--dry-run", action="store_true", help="Simulate synchronization without modifying files")
     parser.add_argument("--no-framework-repo", action="store_true", help="Skip synchronizing asd-framework-public repo")
     parser.add_argument("--push-to-global", action="store_true", help="Propagate changes from asd-framework-public to canonical ~/.agents/")
@@ -269,7 +269,7 @@ def main():
     args = parser.parse_args()
 
     print("════════════════════════════════════════════════════════════════")
-    print("  ASD Framework v2 — Global Agent Ecosystem Synchronizer")
+    print("  ASD Framework — Global Agent Ecosystem Synchronizer")
     print("════════════════════════════════════════════════════════════════")
 
     if args.push_to_global:

@@ -1,6 +1,6 @@
 # Developer Profile & Personal Context: Idequel Bernabel
 
-> Canonical context file for Idequel Bernabel personal profile, architectural philosophy, technological stack, and development preferences. Referenced by ASD Framework v2 across all agent sessions.
+> Canonical context file for Idequel Bernabel personal profile, architectural philosophy, technological stack, and development preferences. Referenced by ASD Framework across all agent sessions.
 
 ---
 
@@ -40,7 +40,7 @@
 ### AI & Agentic Tooling
 - **Harnesses & Environments:** Antigravity (Google DeepMind), Claude Code, Codex
 - **AI Toolkits:** Vercel AI SDK 5, LangChain / LangGraph, Langfuse, Langsmith
-- **Pipelines:** ASD Framework v2, Uncle Bob 7-Agent Pipeline, Code-Pipeline-Lite
+- **Pipelines:** ASD Framework, Uncle Bob 7-Agent Pipeline, Code-Pipeline-Lite
 
 ---
 

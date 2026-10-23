@@ -13,7 +13,7 @@ user-invocable: true
 # Skill / Workflow: Sincronización con GitHub (`repo-sync`)
 
 ## Descripción
-Este workflow define el procedimiento estándar para sincronizar de forma segura y consistente los cambios locales del proyecto con el repositorio remoto en GitHub, garantizando un historial de commits lineal, versionado semántico formal (SemVer), **actualización obligatoria de `CHANGELOG.md`**, creación de etiquetas anotadas (**Git tags**) sobre el commit de release y alineación estricta con las reglas del **Framework ASD v2**.
+Este workflow define el procedimiento estándar para sincronizar de forma segura y consistente los cambios locales del proyecto con el repositorio remoto en GitHub, garantizando un historial de commits lineal, versionado semántico formal (SemVer), **actualización obligatoria de `CHANGELOG.md`**, creación de etiquetas anotadas (**Git tags**) sobre el commit de release y alineación estricta con las reglas del **Framework ASD**.
 
 ---
 

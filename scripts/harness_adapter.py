@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Universal AI Harness Adapter for ASD Framework v2.
+Universal AI Harness Adapter for ASD Framework.
 
 Generates, validates, and synchronizes harness configuration files ensuring
 full out-of-the-box compatibility across:
@@ -233,7 +233,7 @@ def print_validation_report(all_passed, report, project_dir):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Universal AI Harness Adapter for ASD Framework v2")
+    parser = argparse.ArgumentParser(description="Universal AI Harness Adapter for ASD Framework")
     parser.add_argument("--project-dir", default=".", help="Target project root directory (default: current dir)")
     parser.add_argument("--domain", default="software", help="Project domain category")
     parser.add_argument("--validate", action="store_true", help="Validate harness compatibility without modifying files")

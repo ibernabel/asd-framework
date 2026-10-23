@@ -1,4 +1,4 @@
-# AGENTS.md — Agent-Driven Structured Development (ASD Framework v2)
+# AGENTS.md — Agent-Driven Structured Development (ASD Framework)
 
 > Root agent configuration manifest conforming to the open AGENTS.md standard (OpenAI Codex, ChatGPT, Claude Code, Cursor, Windsurf, Aider).
 > Canonical project rules and domain definitions are maintained in `.agents/AGENTS.md`.

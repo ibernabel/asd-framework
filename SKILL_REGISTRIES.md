@@ -1,6 +1,6 @@
 # Registro de Repositorios y Catálogo de Skills en Línea
 
-Este documento es la **Fuente Única de Verdad (SSOT)** para el registro, consulta e instalación de Agent Skills provenientes de repositorios y marketplaces en línea para el **Framework ASD v2**.
+Este documento es la **Fuente Única de Verdad (SSOT)** para el registro, consulta e instalación de Agent Skills provenientes de repositorios y marketplaces en línea para el **Framework ASD**.
 
 ---
 

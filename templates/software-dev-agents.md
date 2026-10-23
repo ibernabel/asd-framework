@@ -6,7 +6,7 @@
 
 ## Execution Scope: Planning Mode (Strict)
 
-This project follows the **full ASD Framework v2** with strict adherence to the plan-first workflow
+This project follows the **full ASD Framework** with strict adherence to the plan-first workflow
 and the **Uncle Bob Pipeline** (Orchestrator → Specifier → Coder → Refactorer → Architect → QA).
 
 ---

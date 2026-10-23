@@ -1,7 +1,7 @@
-# GitHub Copilot Instructions — ASD Framework v2
+# GitHub Copilot Instructions — ASD Framework
 
 ## Project Governance
-This repository follows the ASD Framework v2 pair programming and engineering standards.
+This repository follows the ASD Framework pair programming and engineering standards.
 
 ## Development Rules
 - **Branching Policy:** All changes must be developed on a dedicated branch (`feature/*` or `fix/*`). Never commit directly to `main` or `develop`.

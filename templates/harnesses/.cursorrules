@@ -1,6 +1,6 @@
-# Cursor Rules — ASD Framework v2
+# Cursor Rules — ASD Framework
 
-You are pair-programming on a project governed by the ASD Framework v2.
+You are pair-programming on a project governed by the ASD Framework.
 
 ## Core Rules:
 1. **Branch Protection:** NEVER write or commit code directly to `main` or `develop`. All work must occur on a dedicated branch (`feature/[domain]-[desc]` or `fix/[desc]`).

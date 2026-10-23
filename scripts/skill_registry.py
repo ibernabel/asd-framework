@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Skill Registry CLI & Library for ASD Framework v2.
+Skill Registry CLI & Library for ASD Framework.
 Interacts with online registries (SkillsMP, Antigravity-Skills, Hasna/Skills.md, GitHub)
 to search, inspect, and install skills globally into ~/.agents/skills/.
 """
@@ -215,7 +215,7 @@ def install_skill_from_git(repo_url, skill_path=None, name=None):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="ASD Framework v2 Skill Registry Tool")
+    parser = argparse.ArgumentParser(description="ASD Framework Skill Registry Tool")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # Search command

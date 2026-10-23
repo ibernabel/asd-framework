@@ -1,7 +1,7 @@
 # CLAUDE.md — Anthropic Claude Code Instructions
 
 > Canonical project memory for Claude Code CLI.
-> This workspace is governed by the **ASD Framework v2 (Agent-Driven Structured Development)**.
+> This workspace is governed by the **ASD Framework (Agent-Driven Structured Development)**.
 
 ---
 

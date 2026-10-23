@@ -1,6 +1,6 @@
-# Windsurf Cascade Rules — ASD Framework v2
+# Windsurf Cascade Rules — ASD Framework
 
-Operating under the ASD Framework v2 standards.
+Operating under the ASD Framework standards.
 
 - Always verify the active git branch before editing code (`git branch --show-current`). Never commit to `main` or `develop`.
 - Follow Planning Mode for software tasks: clarify acceptance criteria, write tests first, then write minimal code to pass.

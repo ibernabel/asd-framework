@@ -1,13 +1,13 @@
 ---
 name: project-init
-description: "Inicializar un nuevo proyecto configurando Git, GitHub (privado), marco ASD v2, docs/, .agents/, AGENTS.md, CONVENTIONS.md, workflows, agentes del pipeline, plantillas deterministas de skills y versionado."
+description: "Inicializar un nuevo proyecto configurando Git, GitHub (privado), marco ASD, docs/, .agents/, AGENTS.md, CONVENTIONS.md, workflows, agentes del pipeline, plantillas deterministas de skills y versionado."
 ---
 
 # Skill: Project Initialization (`project-init`)
 
 ## Descripción
 
-Esta skill automatiza la inicialización de cualquier directorio como un proyecto estructurado bajo los estándares del desarrollador (Idequel Bernabel) y el **Framework ASD v2**.
+Esta skill automatiza la inicialización de cualquier directorio como un proyecto estructurado bajo los estándares del desarrollador (Idequel Bernabel) y el **Framework ASD**.
 
 Soporta proyectos de dominio único y proyectos **multi-vertical** (ej: Consultor con verticales `admin`, `technology`, `content`). Configura Git, GitHub privado, `.gitignore`, jerarquía `docs/`, reglas de agente por dominio, **instalación determinista de skills vía symlinks** desde `~/.agents/skills/`, sincronización de la tabla `## Auto-invoke Skills` en `AGENTS.md`, y para proyectos de software instala el pipeline Uncle Bob completo (7 agentes) y skills deterministas.
 
@@ -414,7 +414,7 @@ Las herramientas y meta-comandos globales (`code-pipeline`, `docs-and-sync`, `po
 git add .
 
 # Create initial commit using Conventional Commit format
-git commit -m "chore: initialize project with ASD framework v2 standards and deterministic skills"
+git commit -m "chore: initialize project with ASD framework standards and deterministic skills"
 
 # Push initial commit to origin main branch
 git push -u origin main

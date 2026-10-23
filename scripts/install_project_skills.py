@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Install / Copy Project Skills for ASD Framework v2.
+Install / Copy Project Skills for ASD Framework.
 Reads deterministic presets from ~/.agents/templates/skills/presets.json,
 verifies against ~/.agents/skills/, installs physical copies in <project>/.agents/skills/
 (replacing any legacy symlinks for full Antigravity/Claude Code/Codex compatibility),

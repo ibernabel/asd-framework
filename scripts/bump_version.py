@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Bump version script for ASD Framework v2 projects.
+Bump version script for ASD Framework projects.
 Supports: patch, minor, major.
 Updates VERSION, package.json / pyproject.toml, scaffolds/updates CHANGELOG.md,
 and supports Git tagging conforming to SemVer and versioning-guide standards.

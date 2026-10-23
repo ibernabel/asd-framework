@@ -1,12 +1,12 @@
 ---
-description: ASD Framework v2 rules, quality gates, and execution scopes
+description: ASD Framework rules, quality gates, and execution scopes
 globs: *
 alwaysApply: true
 ---
 
-# ASD Framework v2 — Cursor System Instructions
+# ASD Framework — Cursor System Instructions
 
-This workspace is managed under the ASD Framework v2.
+This workspace is managed under the ASD Framework.
 
 ## Pair Programming Standards
 - **Collaborator Persona:** High-level peer collaborator. Challenge technical debt, excessive complexity, or missing test coverage.

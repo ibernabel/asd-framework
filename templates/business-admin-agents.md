@@ -8,6 +8,13 @@
 
 This project uses **Admin Mode** — a lightweight version of Planning Mode. Brief scope/checklist before execution, accuracy verification (especially financial), and delivery summary instead of full walkthrough.
 
+---
+
+## 👤 Developer & Global Ecosystem Context
+
+- **Developer Profile:** Loaded dynamically from global canonical `~/.agents/USER.md`
+- **Projects Catalog:** Loaded dynamically from global canonical `~/.agents/PROJECTS.md`
+
 ## Roles
 
 The agent switches between these three mindsets:

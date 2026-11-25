@@ -8,6 +8,13 @@
 
 This project uses **Fast Mode** by default. The ASD planning overhead is skipped for content tasks. Planning Mode only activates when modifying production pipeline tools (Python scripts, automation workflows).
 
+---
+
+## 👤 Developer & Global Ecosystem Context
+
+- **Developer Profile:** Loaded dynamically from global canonical `~/.agents/USER.md`
+- **Projects Catalog:** Loaded dynamically from global canonical `~/.agents/PROJECTS.md`
+
 ## Roles
 
 The agent switches between these three mindsets:

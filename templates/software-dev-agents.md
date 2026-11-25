@@ -11,6 +11,13 @@ and the **Uncle Bob Pipeline** (Orchestrator → Specifier → Coder → Refacto
 
 ---
 
+## 👤 Developer & Global Ecosystem Context
+
+- **Developer Profile:** Loaded dynamically from global canonical `~/.agents/USER.md`
+- **Projects Catalog:** Loaded dynamically from global canonical `~/.agents/PROJECTS.md`
+
+---
+
 ## Roles
 
 The agent must dynamically switch between these four mindsets:

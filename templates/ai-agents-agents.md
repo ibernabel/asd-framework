@@ -8,6 +8,13 @@
 
 This project follows the **full ASD Framework** with strict planning. AI systems require careful design, safety review, and evaluation before deployment.
 
+---
+
+## 👤 Developer & Global Ecosystem Context
+
+- **Developer Profile:** Loaded dynamically from global canonical `~/.agents/USER.md`
+- **Projects Catalog:** Loaded dynamically from global canonical `~/.agents/PROJECTS.md`
+
 ## Roles
 
 The agent switches between these three mindsets:

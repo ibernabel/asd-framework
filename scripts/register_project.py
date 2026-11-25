@@ -30,8 +30,8 @@ def load_projects():
 
 def save_projects(data):
     data["updated_at"] = datetime.now().isoformat()
-    # Sort projects by domain then id
-    data["projects"].sort(key=lambda p: (p.get("domain", ""), p.get("id", "")))
+    # Sort projects by id
+    data["projects"].sort(key=lambda p: p.get("id", "").lower())
     with open(JSON_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     render_markdown(data)

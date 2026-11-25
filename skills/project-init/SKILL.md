@@ -63,6 +63,7 @@ Usado cuando el proyecto ya tiene código activo, commits y estructura. **No se 
 - `.agents/CONVENTIONS.md` — **NUNCA sobreescribir si ya existe**. Preservar la identidad, stack y convenciones del proyecto.
 
 **Pasos que SÍ se ejecutan en modo retrofit y update:**
+- Paso 0: Verificación del Perfil Global del Desarrollador (`~/.agents/USER.md`)
 - Skill Inventory Check y Preset Resolution (Paso 1B)
 - Detección de verticales (Paso 1, punto 3-4)
 - Creación de `docs/` y subcarpetas faltantes (sin tocar los existentes)
@@ -74,6 +75,25 @@ Usado cuando el proyecto ya tiene código activo, commits y estructura. **No se 
 ---
 
 ## Pasos de Ejecución del Agente
+
+### Paso 0: Verificación y Configuración del Perfil Global del Desarrollador (`~/.agents/USER.md`)
+
+Antes de configurar o retrofitear cualquier proyecto, el framework verifica la existencia del perfil canónico global del desarrollador:
+
+```bash
+# Check if global USER.md exists
+test -f ~/.agents/USER.md && echo "EXISTS" || echo "MISSING"
+```
+
+1. **Si existe:** Se preserva intacto como la fuente única de verdad (SSOT) del desarrollador. No se modifica durante la inicialización o retrofit del proyecto.
+2. **Si NO existe (primer uso del framework o nuevo entorno):**
+   - El agente inicializa la creación del perfil de usuario ofreciendo dos caminos:
+     - **Fase A (Perfil Rápido - 2 minutos):** Captura nombre, arquetipo (ej: *Builder & Engineering Founder*, *CTO / Consultor*, *Solo Founder*), verticales clave, stack principal, filosofía arquitectónica y zona horaria. Genera `~/.agents/USER.md` a partir de la plantilla `~/.agents/templates/user-template.md`.
+     - **Fase B (Entrevista en Profundidad Opcional):** El agente pregunta proactivamente:
+       > *"¿Deseas realizar una entrevista interactiva en profundidad (`/grill-me`) para mapear detalladamente todas tus dimensiones, proyectos satélite, negocios familiares y modelos de colaboración, o prefieres continuar con el perfil base?"*
+       Si el usuario confirma, se ejecuta `/grill-me` guiado por el árbol de diseño multidimensional.
+
+---
 
 ### Paso 1: Determinación de Nombre, Dominio, Verticales y Stack
 
@@ -422,6 +442,20 @@ git push -u origin main
 
 ---
 
+### Paso 10: Registro Obligatorio en el Catálogo Central (~/.agents/PROJECTS.md)
+
+> [!IMPORTANT]
+> **Registro Mandatario SSOT:**
+> Todo proyecto inicializado (`init`), adaptado (`retrofit`) o actualizado (`update`) DEBE quedar registrado en el inventario central (`~/.agents/PROJECTS.md` y `~/.agents/projects.json`).
+> Esto permite auditar, sincronizar ecosistemas y propagar skills/templates automáticamente.
+
+```bash
+# Registrar o actualizar proyecto en el catálogo central ASD
+python3 /home/ibernabel/.agents/scripts/register_project.py --path .
+```
+
+---
+
 ## Auditoría Obligatoria Post-Ejecución
 
 > ⚠️ **Esta sección es OBLIGATORIA y no es opcional.** El agente DEBE ejecutar estos comandos y reportar los resultados reales del sistema de archivos. No es suficiente afirmar que algo fue hecho — debe comprobarse con comandos que lean el filesystem.
@@ -516,6 +550,10 @@ fi
 # ── Git remote ────────────────────────────────────────────────────────────
 echo "=== GIT AUDIT ===" && \
 git remote -v 2>/dev/null || echo "❌ No git remote configured"
+
+# ── Registro en Catálogo Central ──────────────────────────────────────────
+echo "=== CATALOG REGISTRATION AUDIT ===" && \
+python3 /home/ibernabel/.agents/scripts/register_project.py --path .
 ```
 
 ### Reporte final obligatorio
@@ -542,6 +580,7 @@ Al terminar la auditoría, el agente debe producir un resumen en este formato:
 | ROADMAP.md | ✅/❌ | |
 | .gitignore (sin sobreescritura) | ✅/❌ | |
 | Git remote | ✅/❌ | |
+| Registro en Catálogo (~/.agents/PROJECTS.md) | ✅/❌ | Sincronizado en inventario SSOT |
 
 **Items faltantes:** [lista o "Ninguno"]
 **Acción requerida:** [pasos para corregir los faltantes, si los hay]

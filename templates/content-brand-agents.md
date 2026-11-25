@@ -8,6 +8,13 @@
 
 This project uses **Fast Mode** by default. Content creation tasks execute directly without ASD planning overhead. Planning Mode only activates when building content tools or automation systems.
 
+---
+
+## 👤 Developer & Global Ecosystem Context
+
+- **Developer Profile:** Loaded dynamically from global canonical `~/.agents/USER.md`
+- **Projects Catalog:** Loaded dynamically from global canonical `~/.agents/PROJECTS.md`
+
 ## Roles
 
 The agent switches between these three mindsets:

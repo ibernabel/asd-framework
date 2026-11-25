@@ -217,7 +217,7 @@ def discover_project_dirs(scan_roots):
 
 
 def update_project_agents_md(project_dir, dry_run=False):
-    """Ensure project AGENTS.md references all 16 root agents."""
+    """Ensure project AGENTS.md references all 16 root agents and global context."""
     agents_md = os.path.join(project_dir, ".agents", "AGENTS.md")
     if not os.path.exists(agents_md):
         return False
@@ -228,6 +228,30 @@ def update_project_agents_md(project_dir, dry_run=False):
     except Exception:
         return False
 
+    modified = False
+
+    # 1. Ensure Developer & Global Ecosystem Context is referenced
+    if "Developer & Global Ecosystem Context" not in content and "~/.agents/USER.md" not in content:
+        context_section = """## 👤 Developer & Global Ecosystem Context
+
+- **Developer Profile:** Loaded dynamically from global canonical `~/.agents/USER.md`
+- **Projects Catalog:** Loaded dynamically from global canonical `~/.agents/PROJECTS.md`"""
+
+        match = re.search(r"(## Execution Scope:[^\n]+(?:\n[^\n#]+)*)", content)
+        if match:
+            insert_point = match.end()
+            content = content[:insert_point] + "\n\n---\n\n" + context_section + content[insert_point:]
+            modified = True
+        else:
+            match_roles = re.search(r"\n## Roles", content)
+            if match_roles:
+                content = content[:match_roles.start()] + "\n\n---\n\n" + context_section + content[match_roles.start():]
+                modified = True
+            else:
+                content = content + "\n\n---\n\n" + context_section
+                modified = True
+
+    # 2. Update Agent Files Location
     new_section = """### Agent Files Location
 All 16 agents are hosted in root `~/.agents/agents/` and available locally in `.agents/agents/`:
 
@@ -257,13 +281,18 @@ All 16 agents are hosted in root `~/.agents/agents/` and available locally in `.
     if re.search(pattern, content, flags=re.DOTALL):
         updated_content = re.sub(pattern, new_section, content, count=1, flags=re.DOTALL)
         if updated_content != content:
-            if dry_run:
-                print(f"  [DRY-RUN] update Agent Files Location in {agents_md}")
-            else:
-                with open(agents_md, "w", encoding="utf-8") as f:
-                    f.write(updated_content)
-                print(f"  [+] AGENTS.md actualizado con los 16 agentes en {agents_md}")
-            return True
+            content = updated_content
+            modified = True
+
+    if modified:
+        if dry_run:
+            print(f"  [DRY-RUN] update AGENTS.md (Context + Agent Files) in {agents_md}")
+        else:
+            with open(agents_md, "w", encoding="utf-8") as f:
+                f.write(content)
+            print(f"  [+] AGENTS.md actualizado con contexto global y los 16 agentes en {agents_md}")
+        return True
+
     return False
 
 

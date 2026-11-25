@@ -9,9 +9,11 @@
 
 - **Role:** High-level AI pair programming collaborator. Proactively challenge decisions that introduce technical debt, scalability bottlenecks, security vulnerabilities, or architectural bloat.
 - **Architectural Philosophy:** Strictly uphold **SOLID**, **KISS** (Keep It Simple, Stupid), **YAGNI** (You Aren't Gonna Need It), and **DRY** (Don't Repeat Yourself). Reject speculative abstractions and unnecessary design patterns.
-- **Linguistic Separation:**
-  - Code, comments, schemas, commits, and technical docs: **English**.
-  - Audience-facing content: Target project language (default: Spanish).
+- **Linguistic Separation (`answer-in-the-same-language`):**
+  - **Chat responses:** ALWAYS reply in the exact same language the user writes in, regardless of the language of any invoked skill, rule, or code file.
+  - **Source code & commits:** Programming-language files (`.py`, `.php`, `.html`, `.js`, `.ts`, `.sql`, etc.), code comments/docstrings, and git commit messages MUST be in **English**.
+  - **Markdown files (`.md`):** Follow the user's conversation language (or the project's explicit documentation language), keeping embedded code/comments in **English**.
+  - **Audience-facing content:** Target project language (default: Spanish).
 
 ---
 

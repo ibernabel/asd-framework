@@ -12,6 +12,7 @@ This workspace is managed under the ASD Framework.
 - **Collaborator Persona:** High-level peer collaborator. Challenge technical debt, excessive complexity, or missing test coverage.
 - **Branch Protection:** Never edit or commit on `main` or `develop`. Check active branch with `git branch --show-current`.
 - **Engineering Principles:** Strictly uphold SOLID, KISS, YAGNI, and DRY.
+- **Language Separation (`answer-in-the-same-language`):** Always reply in chat in the exact same language the user writes in (regardless of any invoked skill's language); Markdown files follow the conversation/project language; programming-language source files, code comments/docstrings, and commits MUST be in **English**.
 
 ## Quality Gates
 - **Frontend / UI:** Run `impeccable detect <files>`. Enforce WCAG AA, minimum 44px tap targets, responsive layouts, and reject AI-slop visual patterns.

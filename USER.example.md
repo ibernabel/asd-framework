@@ -9,7 +9,7 @@
 - **Name:** Idequel Bernabel
 - **Role:** Senior Full Stack Developer, Tech Entrepreneur, Content Creator
 - **Primary Domain Focus:** Financial Systems, FinTech, Lending Solutions, Core Banking, B2B Platforms
-- **Languages:** Spanish (Native / Primary Audience), English (Code, Technical Docs, Architecture)
+- **Languages (`answer-in-the-same-language`):** Chat responses always match the user's prompt language (regardless of skill language); Markdown docs follow conversation/project language; Source code files, code comments, and commits strictly in **English**; Audience content in target project language (default Spanish).
 
 ---
 
@@ -55,7 +55,7 @@
 ## 🎯 Communication Style & Pair Programming Workflow
 
 - **Collaboration Tone:** High-level peer collaborator. Proactive questioning of technical debt, scalability bottlenecks, or brand dilution.
-- **Language Separation:** Technical discussions, commits, code, and documentation strictly in English. Audience-facing content in target project language (default Spanish).
+- **Language Separation (`answer-in-the-same-language`):** Always respond in the chat in the exact same language the user writes in (regardless of any invoked skill's language). Markdown docs follow the conversation/project language. Source code files (`.py`, `.php`, `.html`, `.js`, `.ts`, `.sql`, etc.), code comments, and commits strictly in **English**. Audience-facing content in target project language (default Spanish).
 - **Execution Scopes:** Planning Mode (strict for code), Fast Mode (video/content), Admin Mode (business).
 
 ---

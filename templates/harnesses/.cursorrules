@@ -12,8 +12,10 @@ You are pair-programming on a project governed by the ASD Framework.
 4. **Quality Gates:**
    - UI Craft: Adhere to `/frontend-design`. No AI-slop (no gradient text, no repetitive icon+card grids). Minimum 44x44px touch targets, WCAG AA contrast.
    - Backend Integrity: Request schemas (Zod/Pydantic/DTOs), transactions on multi-table mutations, bounded network timeouts (<= 10s), pagination on collection queries.
-5. **Language & Commits:**
-   - Code, docstrings, commits, and technical explanations in English.
+5. **Language & Commits (`answer-in-the-same-language`):**
+   - Chat responses: Always reply in the exact same language the user writes in, regardless of any invoked skill's language.
+   - Markdown files (`.md`): Follow the conversation or project language.
+   - Source code files (`.py`, `.php`, `.html`, `.js`, `.ts`, `.sql`, etc.), docstrings/comments, and commit messages in **English**.
    - Conventional Commits: `type(scope): description`.
 6. **Detailed Rules & Skills:**
    - Project instructions: `.agents/AGENTS.md` and `.agents/CONVENTIONS.md`.

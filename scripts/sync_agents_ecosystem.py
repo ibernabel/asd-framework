@@ -216,15 +216,232 @@ def discover_project_dirs(scan_roots):
     return sorted(list(found))
 
 
+LINGUISTIC_SECTION_TITLE = "## 🌐 Linguistic Separation & Chat Language (`answer-in-the-same-language`)"
+LINGUISTIC_SECTION = """## 🌐 Linguistic Separation & Chat Language (`answer-in-the-same-language`)
+
+- **Chat Responses (`answer-in-the-same-language`):** ALWAYS respond and explain in the **exact same language the user used in their prompt** (Spanish, English, Portuguese, Italian, etc.), **regardless of the language in which any invoked skill (`SKILL.md`), rule file, or source code is written**.
+- **Source Code & Commits:** Programming-language files (`.py`, `.php`, `.html`, `.js`, `.ts`, `.tsx`, `.css`, `.sql`, `.sh`, etc.), code comments/docstrings (`JSDoc`/`PEP`/`PHPDoc`), and git commit messages MUST be in **English**.
+- **Markdown Files (`.md`):** Follow the user's conversation language (or the project's explicit documentation language), keeping embedded code snippets and code comments in **English**.
+- **Audience Content:** Target project language (default: **Spanish**)."""
+
+HARNESS_ROOT_AGENTS_BLOCK = """- **Linguistic Separation (`answer-in-the-same-language`):**
+  - **Chat responses:** ALWAYS reply in the exact same language the user writes in, regardless of the language of any invoked skill, rule, or code file.
+  - **Source code & commits:** Programming-language files (`.py`, `.php`, `.html`, `.js`, `.ts`, `.sql`, etc.), code comments/docstrings, and git commit messages MUST be in **English**.
+  - **Markdown files (`.md`):** Follow the user's conversation language (or the project's explicit documentation language), keeping embedded code/comments in **English**.
+  - **Audience-facing content:** Target project language (default: Spanish)."""
+
+HARNESS_CLAUDE_LINE = "- **Linguistic Separation (`answer-in-the-same-language`):** Always respond in chat in the exact same language the user writes in, regardless of any invoked skill's language. Markdown files (`.md`) follow the conversation/project language. Programming-language files (`.py`, `.php`, `.html`, `.js`, `.ts`, `.sql`, etc.), code comments/docstrings, and commit messages MUST be in **English**."
+
+HARNESS_CURSORRULES_BLOCK = """5. **Language & Commits (`answer-in-the-same-language`):**
+   - Chat responses: Always reply in the exact same language the user writes in, regardless of any invoked skill's language.
+   - Markdown files (`.md`): Follow the conversation or project language.
+   - Source code files (`.py`, `.php`, `.html`, `.js`, `.ts`, `.sql`, etc.), docstrings/comments, and commit messages in **English**.
+   - Conventional Commits: `type(scope): description`."""
+
+HARNESS_CURSOR_MDC_LINE = "- **Language Separation (`answer-in-the-same-language`):** Always reply in chat in the exact same language the user writes in (regardless of any invoked skill's language); Markdown files follow the conversation/project language; programming-language source files, code comments/docstrings, and commits MUST be in **English**."
+
+HARNESS_WINDSURF_LINE = "- **Language Separation (`answer-in-the-same-language`):** Always respond in chat in the exact same language the user writes in, regardless of any invoked skill's language. Markdown files follow the conversation/project language. Source code files, code comments/docstrings, and commits must be in **English**."
+
+HARNESS_COPILOT_LINE = "- **Language & Commits (`answer-in-the-same-language`):** Always respond in chat in the exact same language the user writes in (regardless of any invoked skill's language); Markdown docs follow the conversation/project language. All programming-language source files, code comments/docstrings, and commit messages must be in **English**. Use Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`)."
+
+
+def _read_text_preserve_eol(path):
+    """Read UTF-8 text normalized to LF while returning original line ending."""
+    with open(path, "r", encoding="utf-8", errors="ignore", newline="") as f:
+        raw = f.read()
+    eol = "\r\n" if "\r\n" in raw else "\n"
+    return raw.replace("\r\n", "\n"), eol
+
+
+def _write_text_preserve_eol(path, normalized_text, eol):
+    """Write UTF-8 text restoring the file's original line ending."""
+    out = normalized_text.replace("\n", eol) if eol == "\r\n" else normalized_text
+    with open(path, "w", encoding="utf-8", newline="") as f:
+        f.write(out)
+
+
+def sync_linguistic_section_in_agents_md(content):
+    """Ensure .agents/AGENTS.md includes the canonical answer-in-the-same-language rule."""
+    # 1. Replace existing canonical linguistic section if present
+    canonical_pattern = re.compile(
+        r"## 🌐 Linguistic Separation[^\n]*\n.*?(?=\n+(?:---|## )|\Z)",
+        flags=re.DOTALL,
+    )
+    if canonical_pattern.search(content):
+        updated = canonical_pattern.sub(LINGUISTIC_SECTION, content, count=1)
+        return updated, updated != content
+
+    # 2. Preserve custom project-specific language sections (e.g., Cake Toppers, Lender)
+    custom_pattern = re.compile(
+        r"(## [^\n]*(?:Idioma de Interacción|Idioma oficial|Linguistic & Tone Standard)[^\n]*\n.*?)(?=\n---|\n## |\Z)",
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    if custom_pattern.search(content):
+        if "answer-in-the-same-language" in content:
+            return content, False
+        note = (
+            "\n\n### Chat Language (`answer-in-the-same-language`)\n\n"
+            "- Responder siempre en el chat en el **mismo idioma en que escribe el usuario**, "
+            "sin importar el idioma de la skill invocada o de que el código fuente esté en inglés."
+        )
+        updated = custom_pattern.sub(lambda m: m.group(1).rstrip() + note, content, count=1)
+        return updated, updated != content
+
+    if "answer-in-the-same-language" in content:
+        return content, False
+
+    # 3. Insert right after Developer & Global Ecosystem Context if present
+    ctx_pattern = re.compile(
+        r"(## 👤 Developer & Global Ecosystem Context[^\n]*\n(?:\n|[^\n#].*\n)*)",
+        flags=re.MULTILINE,
+    )
+    match_ctx = ctx_pattern.search(content)
+    if match_ctx:
+        insert_at = match_ctx.end()
+        updated = content[:insert_at].rstrip() + "\n\n---\n\n" + LINGUISTIC_SECTION + "\n\n" + content[insert_at:].lstrip()
+        return updated, True
+
+    # 4. Fallback: insert before ## Roles or append at end
+    match_roles = re.search(r"\n## Roles", content)
+    if match_roles:
+        pos = match_roles.start()
+        updated = content[:pos].rstrip() + "\n\n---\n\n" + LINGUISTIC_SECTION + "\n\n" + content[pos:].lstrip()
+        return updated, True
+
+    return content.rstrip() + "\n\n---\n\n" + LINGUISTIC_SECTION + "\n", True
+
+
+def _patch_root_agents_md(content):
+    """Patch root AGENTS.md non-destructively to enforce answer-in-the-same-language."""
+    # Update canonical root AGENTS.md block if present
+    existing_block = re.compile(
+        r"- \*\*Linguistic Separation(?: \(`answer-in-the-same-language`\))?:\*\*(?:\n  - .+)+",
+        flags=re.MULTILINE,
+    )
+    if existing_block.search(content):
+        updated = existing_block.sub(HARNESS_ROOT_AGENTS_BLOCK, content, count=1)
+        return updated, updated != content
+
+    # Preserve custom Corebank-style ## Idioma oficial section
+    oficial_pattern = re.compile(
+        r"(## Idioma oficial\n.*?)(?=\n## |\Z)",
+        flags=re.DOTALL,
+    )
+    if oficial_pattern.search(content):
+        if "answer-in-the-same-language" in content:
+            return content, False
+        note = (
+            "\n- **Regla `answer-in-the-same-language`:** Responder siempre en el chat en el mismo idioma "
+            "en que escribe el usuario, sin importar el idioma de la skill invocada."
+        )
+        updated = oficial_pattern.sub(lambda m: m.group(1).rstrip() + note, content, count=1)
+        return updated, updated != content
+
+    if "answer-in-the-same-language" in content:
+        return content, False
+
+    # Fallback for custom root AGENTS.md (e.g., coopsolufime Astro instructions)
+    section = f"\n\n## Linguistic Separation (`answer-in-the-same-language`)\n\n{HARNESS_ROOT_AGENTS_BLOCK}\n"
+    return content.rstrip() + section, True
+
+
+def _patch_harness_content(rel_path, content):
+    """Apply surgical language-rule update to a single harness file's normalized content."""
+    if rel_path == "AGENTS.md":
+        return _patch_root_agents_md(content)
+
+    if rel_path == "CLAUDE.md":
+        if HARNESS_CLAUDE_LINE in content:
+            return content, False
+        legacy = "- Code, comments, commits, and technical explanations must be in **English**."
+        if legacy in content:
+            return content.replace(legacy, HARNESS_CLAUDE_LINE, 1), True
+        if "answer-in-the-same-language" in content:
+            return content, False
+        return content.rstrip() + f"\n\n## Language Separation\n\n{HARNESS_CLAUDE_LINE}\n", True
+
+    if rel_path == ".cursorrules":
+        if HARNESS_CURSORRULES_BLOCK in content:
+            return content, False
+        legacy_pattern = re.compile(
+            r"5\. \*\*Language & Commits:\*\*\n   - Code, docstrings, commits, and technical explanations in English\.\n   - Conventional Commits: `type\(scope\): description`\.",
+            flags=re.MULTILINE,
+        )
+        if legacy_pattern.search(content):
+            return legacy_pattern.sub(HARNESS_CURSORRULES_BLOCK, content, count=1), True
+        if "answer-in-the-same-language" in content:
+            return content, False
+        return content.rstrip() + f"\n\n{HARNESS_CURSORRULES_BLOCK}\n", True
+
+    if rel_path == os.path.join(".cursor", "rules", "asd-framework.mdc"):
+        if HARNESS_CURSOR_MDC_LINE in content or "answer-in-the-same-language" in content:
+            return content, False
+        anchor = "- **Engineering Principles:** Strictly uphold SOLID, KISS, YAGNI, and DRY."
+        if anchor in content:
+            return content.replace(anchor, f"{anchor}\n{HARNESS_CURSOR_MDC_LINE}", 1), True
+        return content.rstrip() + f"\n\n{HARNESS_CURSOR_MDC_LINE}\n", True
+
+    if rel_path == ".windsurfrules":
+        if HARNESS_WINDSURF_LINE in content:
+            return content, False
+        legacy = "- Code, commits, and technical explanations must be in English."
+        if legacy in content:
+            return content.replace(legacy, HARNESS_WINDSURF_LINE, 1), True
+        if "answer-in-the-same-language" in content:
+            return content, False
+        return content.rstrip() + f"\n\n{HARNESS_WINDSURF_LINE}\n", True
+
+    if rel_path == os.path.join(".github", "copilot-instructions.md"):
+        if HARNESS_COPILOT_LINE in content:
+            return content, False
+        legacy = "- **Language & Commits:** All code, comments, and commit messages must be in English. Use Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`)."
+        if legacy in content:
+            return content.replace(legacy, HARNESS_COPILOT_LINE, 1), True
+        if "answer-in-the-same-language" in content:
+            return content, False
+        return content.rstrip() + f"\n\n{HARNESS_COPILOT_LINE}\n", True
+
+    return content, False
+
+
+def sync_project_harnesses_language(project_dir, dry_run=False):
+    """Non-destructively update language rules in existing root harness files."""
+    harness_rel_paths = [
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".cursorrules",
+        os.path.join(".cursor", "rules", "asd-framework.mdc"),
+        ".windsurfrules",
+        os.path.join(".github", "copilot-instructions.md"),
+    ]
+    updated_count = 0
+    for rel_path in harness_rel_paths:
+        full_path = os.path.join(project_dir, rel_path)
+        if not os.path.isfile(full_path):
+            continue
+        try:
+            content, eol = _read_text_preserve_eol(full_path)
+        except Exception:
+            continue
+        new_content, changed = _patch_harness_content(rel_path, content)
+        if changed:
+            if dry_run:
+                print(f"  [DRY-RUN] update language rule in {full_path}")
+            else:
+                _write_text_preserve_eol(full_path, new_content, eol)
+                print(f"  [+] Regla de idioma actualizada en {full_path}")
+            updated_count += 1
+    return updated_count
+
+
 def update_project_agents_md(project_dir, dry_run=False):
-    """Ensure project AGENTS.md references all 16 root agents and global context."""
+    """Ensure project AGENTS.md references all 16 root agents, global context, and language rules."""
     agents_md = os.path.join(project_dir, ".agents", "AGENTS.md")
     if not os.path.exists(agents_md):
         return False
 
     try:
-        with open(agents_md, "r", encoding="utf-8") as f:
-            content = f.read()
+        content, eol = _read_text_preserve_eol(agents_md)
     except Exception:
         return False
 
@@ -251,7 +468,12 @@ def update_project_agents_md(project_dir, dry_run=False):
                 content = content + "\n\n---\n\n" + context_section
                 modified = True
 
-    # 2. Update Agent Files Location
+    # 2. Ensure Linguistic Separation & answer-in-the-same-language rule is present
+    content, ling_modified = sync_linguistic_section_in_agents_md(content)
+    if ling_modified:
+        modified = True
+
+    # 3. Update Agent Files Location
     new_section = """### Agent Files Location
 All 16 agents are hosted in root `~/.agents/agents/` and available locally in `.agents/agents/`:
 
@@ -286,18 +508,17 @@ All 16 agents are hosted in root `~/.agents/agents/` and available locally in `.
 
     if modified:
         if dry_run:
-            print(f"  [DRY-RUN] update AGENTS.md (Context + Agent Files) in {agents_md}")
+            print(f"  [DRY-RUN] update AGENTS.md (Context + Language + Agent Files) in {agents_md}")
         else:
-            with open(agents_md, "w", encoding="utf-8") as f:
-                f.write(content)
-            print(f"  [+] AGENTS.md actualizado con contexto global y los 16 agentes en {agents_md}")
+            _write_text_preserve_eol(agents_md, content, eol)
+            print(f"  [+] AGENTS.md actualizado (contexto, idioma y 16 agentes) en {agents_md}")
         return True
 
     return False
 
 
 def sync_project_instance(project_dir, dry_run=False):
-    """Synchronize pipeline agents and install skills in a project."""
+    """Synchronize pipeline agents, language rules, harnesses, and install skills in a project."""
     agents_dir = os.path.join(project_dir, ".agents")
     if not os.path.exists(agents_dir):
         return
@@ -307,7 +528,8 @@ def sync_project_instance(project_dir, dry_run=False):
     # 1. Update pipeline and council agents if .agents/agents exists or if project is software/technology
     project_agents_pool = os.path.join(agents_dir, "agents")
     if os.path.exists(project_agents_pool) or "technology" in project_dir or "software" in project_dir:
-        os.makedirs(project_agents_pool, exist_ok=True)
+        if not dry_run:
+            os.makedirs(project_agents_pool, exist_ok=True)
         synced_agents = 0
         for agent in ALL_PROJECT_AGENTS:
             src_agent_dir = os.path.join(GLOBAL_AGENTS_POOL_DIR, agent)
@@ -316,10 +538,13 @@ def sync_project_instance(project_dir, dry_run=False):
                 synced_agents += sync_directory_files(src_agent_dir, dest_agent_dir, dry_run=dry_run)
         print(f"  [+] Agentes del root (~/.agents/agents): {synced_agents} archivos actualizados en {project_agents_pool}")
 
-    # 2. Update AGENTS.md Agent Files Location
+    # 2. Update AGENTS.md (Context + Linguistic Rule + Agent Files Location)
     update_project_agents_md(project_dir, dry_run=dry_run)
 
-    # 3. Re-run install_project_skills.py to install physical copies and update AGENTS.md
+    # 3. Update language rules in root harness files (AGENTS.md, CLAUDE.md, Cursor, Windsurf, Copilot)
+    sync_project_harnesses_language(project_dir, dry_run=dry_run)
+
+    # 4. Re-run install_project_skills.py to install physical copies and update AGENTS.md
     installer_script = os.path.join(GLOBAL_SCRIPTS_DIR, "install_project_skills.py")
     if os.path.exists(installer_script):
         # Determine domain
@@ -355,6 +580,24 @@ def sync_project_instance(project_dir, dry_run=False):
                     print(f"    {line}")
         except Exception as e:
             print(f"  [!] Error ejecutando install_project_skills: {e}")
+
+
+def discover_subvertical_dirs(project_dirs):
+    """Discover depth-1 vertical directories containing .agents/ (e.g., clipper/video, consultor/admin)."""
+    subverticals = set()
+    for proj in project_dirs:
+        if not os.path.isdir(proj):
+            continue
+        try:
+            for entry in os.listdir(proj):
+                if entry.startswith(".") or entry in ("node_modules", "dist", "build", "__pycache__", "docs", "scripts", "tests"):
+                    continue
+                sub_path = os.path.abspath(os.path.join(proj, entry))
+                if os.path.isdir(os.path.join(sub_path, ".agents")):
+                    subverticals.add(sub_path)
+        except OSError:
+            continue
+    return subverticals
 
 
 def main():
@@ -409,6 +652,7 @@ def main():
         for p in args.project_dir:
             all_targets.add(os.path.abspath(p))
 
+    all_targets.update(discover_subvertical_dirs(list(all_targets)))
     sorted_targets = sorted(list(all_targets))
     print(f"[*] Proyectos detectados para sincronización ({len(sorted_targets)}):")
     for t in sorted_targets:

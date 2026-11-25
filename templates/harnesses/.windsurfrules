@@ -6,7 +6,7 @@ Operating under the ASD Framework standards.
 - Follow Planning Mode for software tasks: clarify acceptance criteria, write tests first, then write minimal code to pass.
 - Uphold SOLID, KISS, YAGNI, and DRY principles.
 - Enforce UI craft floor (WCAG AA, no gradient text/card grids) and backend integrity (typed schemas, transactions, <=10s timeouts).
-- Code, commits, and technical explanations must be in English.
+- **Language Separation (`answer-in-the-same-language`):** Always respond in chat in the exact same language the user writes in, regardless of any invoked skill's language. Markdown files follow the conversation/project language. Source code files, code comments/docstrings, and commits must be in **English**.
 - Commit using Conventional Commits (`type(scope): description`).
 - Consult `.agents/AGENTS.md` and `.agents/CONVENTIONS.md` for project specifications.
 - Project skills are available in `.agents/skills/`.

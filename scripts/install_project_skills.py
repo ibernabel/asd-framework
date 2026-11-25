@@ -45,9 +45,11 @@ def load_presets():
         return data.get("presets", {})
 
 
-def extract_skill_trigger_desc(skill_name):
+def extract_skill_trigger_desc(skill_name, project_dir=None):
     """Extract a concise trigger / description from the skill's SKILL.md."""
     skill_md = os.path.join(GLOBAL_SKILLS_DIR, skill_name, "SKILL.md")
+    if not os.path.exists(skill_md) and project_dir:
+        skill_md = os.path.join(project_dir, ".agents", "skills", skill_name, "SKILL.md")
     if not os.path.exists(skill_md):
         return f"Assistance with {skill_name}"
 
@@ -63,12 +65,25 @@ def extract_skill_trigger_desc(skill_name):
                 match = re.search(r"^description:\s*(.+)$", fm, re.MULTILINE)
                 if match:
                     desc = match.group(1).strip().strip('"\'')
-                    if len(desc) > 90:
-                        desc = desc[:87] + "..."
-                    return desc
+                    if desc in (">", "|"):
+                        after_desc = fm[match.end():]
+                        indented_lines = []
+                        for line in after_desc.splitlines():
+                            if line.startswith("  ") or line.startswith("\t"):
+                                indented_lines.append(line.strip())
+                            elif not line.strip():
+                                continue
+                            else:
+                                break
+                        if indented_lines:
+                            desc = " ".join(indented_lines)
+                    if desc and desc not in (">", "|"):
+                        if len(desc) > 90:
+                            desc = desc[:87] + "..."
+                        return desc
 
         # Check blockquote under title
-        bq_match = re.search(r"^>\s*(.+)$", content, re.MULTILINE)
+        bq_match = re.search(r"^>\s*(\w.+)$", content, re.MULTILINE)
         if bq_match:
             desc = bq_match.group(1).strip()
             if len(desc) > 90:
@@ -132,7 +147,7 @@ def sync_agents_md(project_dir, installed_skills):
     ]
 
     for skill in sorted(installed_skills):
-        desc = extract_skill_trigger_desc(skill)
+        desc = extract_skill_trigger_desc(skill, project_dir)
         desc = desc.replace("|", "/")
         table_lines.append(f"| `{skill}` | {desc} |")
 
@@ -269,7 +284,15 @@ def install_project_skills(project_dir, domain, stacks=None, extra_skills=None, 
     cleanup_legacy_workflows(project_dir, dry_run=dry_run)
 
     if sync_md and not dry_run:
-        sync_agents_md(project_dir, installed)
+        # Include installed domain preset skills and project-specific skills present in target_skills_dir
+        project_custom_skills = [
+            d for d in os.listdir(target_skills_dir)
+            if os.path.isdir(os.path.join(target_skills_dir, d))
+            and os.path.exists(os.path.join(target_skills_dir, d, "SKILL.md"))
+            and not os.path.exists(os.path.join(GLOBAL_SKILLS_DIR, d))
+        ]
+        skills_to_sync = sorted(list(set(installed + project_custom_skills)))
+        sync_agents_md(project_dir, skills_to_sync)
 
     # Synchronize multi-harness bridges (Claude Code, Codex, Cursor, Windsurf, Copilot)
     if sync_harnesses and install_harness_adapters:

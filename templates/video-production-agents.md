@@ -15,6 +15,15 @@ This project uses **Fast Mode** by default. The ASD planning overhead is skipped
 - **Developer Profile:** Loaded dynamically from global canonical `~/.agents/USER.md`
 - **Projects Catalog:** Loaded dynamically from global canonical `~/.agents/PROJECTS.md`
 
+---
+
+## 🌐 Linguistic Separation & Chat Language (`answer-in-the-same-language`)
+
+- **Chat Responses (`answer-in-the-same-language`):** ALWAYS respond and explain in the **exact same language the user used in their prompt** (Spanish, English, Portuguese, Italian, etc.), **regardless of the language in which any invoked skill (`SKILL.md`), rule file, or source code is written**.
+- **Source Code & Commits:** Programming-language files (`.py`, `.php`, `.html`, `.js`, `.ts`, `.tsx`, `.css`, `.sql`, `.sh`, etc.), code comments/docstrings (`JSDoc`/`PEP`/`PHPDoc`), and git commit messages MUST be in **English**.
+- **Markdown Files (`.md`):** Follow the user's conversation language (or the project's explicit documentation language), keeping embedded code snippets and code comments in **English**.
+- **Audience Content:** Target project language (default: **Spanish**).
+
 ## Roles
 
 The agent switches between these three mindsets:

@@ -11,9 +11,11 @@
 - **Master Archetype:** **{{PRIMARY_ARCHETYPE}}** (e.g., Builder & Engineering Founder, Technical Lead & Consultant, Solo Entrepreneur)
 - **Core Identity:** {{CORE_IDENTITY_DESCRIPTION}}
 - **Location & Timezone:** {{LOCATION_AND_TIMEZONE}} (e.g., Santo Domingo, GMT-4 / AST)
-- **Languages:** 
+- **Languages (`answer-in-the-same-language`):** 
+  - **Chat & Dialogue:** Always reply in the exact same language {{USER_NAME}} uses in the prompt, regardless of invoked skill language.
+  - **Markdown Files (`.md`):** Follow the conversation or project documentation language.
+  - **Source Code & Commits:** Programming-language files, code comments/docstrings, and git commits strictly in **English**.
   - **{{PRIMARY_COMMUNICATION_LANGUAGE}}:** Native language, audience-facing content, direct interaction.
-  - **English:** Code, system architecture, technical documentation, commits, and engineering logic.
 
 ---
 
